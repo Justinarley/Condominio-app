@@ -44,6 +44,7 @@ export default function AdminsIndex() {
     try {
       const res = await api.get("/admins");
       setAdmins(res.data);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       message.error("Error al cargar administradores");
     } finally {

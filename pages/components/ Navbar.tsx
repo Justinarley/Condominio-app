@@ -1,36 +1,27 @@
-import { UserOutlined, HomeOutlined, TeamOutlined } from "@ant-design/icons";
+import { UserOutlined, HomeOutlined, TeamOutlined, ApartmentOutlined, DashboardOutlined, PieChartOutlined, BankOutlined } from "@ant-design/icons";
 import { Dropdown } from "antd";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { jwtDecode } from "jwt-decode";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export default function Navbar() {
   const router = useRouter();
-  const [user, setUser] = useState<{ name: string; role: string } | null>(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (token) {
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const decoded: any = jwtDecode(token);
-        setUser({ name: decoded.name, role: decoded.role });
-      } catch (e) {
-        setUser(null);
-      }
-    }
-  }, []);
+  const user = useCurrentUser();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("access_token");
     router.push("/login");
   };
+
+  const handleProfile = () => {
+    router.push("/profile");
+  }
 
   const menuItems = [
     {
       key: "profile",
       icon: <UserOutlined />,
       label: "Perfil",
+      onClick: handleProfile,
     },
     {
       key: "logout",
@@ -40,7 +31,6 @@ export default function Navbar() {
     },
   ];
 
-
   return (
     <nav className="bg-[#0f172a] text-white px-6 py-3 flex justify-between items-center shadow-md">
       <div className="flex gap-6 items-center">
@@ -48,11 +38,11 @@ export default function Navbar() {
 
         {user?.role === "super_admin" && (
           <>
-          <div
+            <div
               className="cursor-pointer hover:text-cyan-400 transition"
               onClick={() => router.push("/superadmin/dashboard")}
             >
-              <TeamOutlined className="mr-1" />
+              <PieChartOutlined className="mr-1" />
               Dashboard
             </div>
             <div
@@ -66,7 +56,7 @@ export default function Navbar() {
               className="cursor-pointer hover:text-cyan-400 transition"
               onClick={() => router.push("/superadmin/condominios")}
             >
-              <HomeOutlined className="mr-1" />
+              <BankOutlined className="mr-1" />
               Condominios
             </div>
           </>
