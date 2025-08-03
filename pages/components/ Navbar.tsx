@@ -1,4 +1,10 @@
-import { UserOutlined, HomeOutlined, TeamOutlined, ApartmentOutlined, DashboardOutlined, PieChartOutlined, BankOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  HomeOutlined,
+  TeamOutlined,
+  PieChartOutlined,
+  BankOutlined,
+} from "@ant-design/icons";
 import { Dropdown } from "antd";
 import { useRouter } from "next/router";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
@@ -14,7 +20,7 @@ export default function Navbar() {
 
   const handleProfile = () => {
     router.push("/profile");
-  }
+  };
 
   const menuItems = [
     {
@@ -63,13 +69,22 @@ export default function Navbar() {
         )}
 
         {user?.role === "admin" && (
-          <div
-            className="cursor-pointer hover:text-green-400 transition"
-            onClick={() => router.push("/admin")}
-          >
-            <HomeOutlined className="mr-1" />
-            Mi Condominio
-          </div>
+          <>
+            <div
+              className="cursor-pointer hover:text-green-400 transition"
+              onClick={() => router.push("/admin/dashboard")}
+            >
+              <PieChartOutlined className="mr-1" />
+              Dashboard
+            </div>
+            <div
+              className="cursor-pointer hover:text-green-400 transition"
+              onClick={() => router.push("/admin/condominios")}
+            >
+              <HomeOutlined className="mr-1" />
+              Mi Condominio
+            </div>
+          </>
         )}
       </div>
 

@@ -32,6 +32,13 @@ interface Admin {
   email: string;
 }
 
+interface AreaComun {
+  nombre: string;
+  estado?: "libre" | "ocupado";
+  descripcion?: string;
+  capacidad?: number;
+}
+
 interface CondominioFormValues {
   id: string;
   name: string;
@@ -42,6 +49,7 @@ interface CondominioFormValues {
   adminId: string;
   torres?: Torre[];
   casas?: Casa[];
+  areasComunes: AreaComun[];
 }
 
 const CondominioFormPage: React.FC = () => {
@@ -95,7 +103,7 @@ const CondominioFormPage: React.FC = () => {
         message.success("Condominio creado");
       }
       router.push("/superadmin/condominios");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       message.error(
         error.response?.data?.message || "Error al guardar condominio"
@@ -293,6 +301,64 @@ const CondominioFormPage: React.FC = () => {
             </Form.List>
           </>
         )}
+
+        <Divider>Áreas Comunes</Divider>
+        <Form.List name="areasComunes">
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(({ key, name }) => (
+                <Card
+                  key={key}
+                  title={`Área Común #${name + 1}`}
+                  className="mb-4"
+                  extra={
+                    <MinusCircleOutlined
+                      onClick={() => remove(name)}
+                      className="text-red-500"
+                    />
+                  }
+                >
+                  <Form.Item
+                    label="Nombre"
+                    name={[name, "nombre"]}
+                    rules={[{ required: true, message: "Requerido" }]}
+                  >
+                    <Input />
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Estado"
+                    name={[name, "estado"]}
+                    rules={[{ required: true, message: "Requerido" }]}
+                  >
+                    <Select>
+                      <Option value="libre">Libre</Option>
+                      <Option value="ocupado">Ocupado</Option>
+                    </Select>
+                  </Form.Item>
+
+                  <Form.Item label="Descripción" name={[name, "descripcion"]}>
+                    <Input.TextArea />
+                  </Form.Item>
+
+                  <Form.Item label="Capacidad" name={[name, "capacidad"]}>
+                    <InputNumber min={1} style={{ width: "100%" }} />
+                  </Form.Item>
+                </Card>
+              ))}
+              <Form.Item>
+                <Button
+                  type="dashed"
+                  onClick={() => add()}
+                  block
+                  icon={<PlusOutlined />}
+                >
+                  Agregar Área Común
+                </Button>
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
 
         <Form.Item>
           <Space>

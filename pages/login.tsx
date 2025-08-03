@@ -39,7 +39,7 @@ export default function LoginPage() {
         default:
           router.push("/dashboard");
       }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       const message =
         error?.response?.data?.message ||
@@ -87,6 +87,15 @@ export default function LoginPage() {
             </Button>
           </Form.Item>
         </Form>
+        <div className="text-center mt-4">
+          <span>¿No tienes una cuenta?</span>
+          <button
+            onClick={() => router.push("/register")}
+            className="ml-2 text-blue-500 hover:underline"
+          >
+            Regístrate aquí
+          </button>
+        </div>
       </Card>
     </div>
   );
