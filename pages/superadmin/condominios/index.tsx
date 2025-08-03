@@ -6,6 +6,7 @@ import {
   Tag,
   message,
   Popconfirm,
+  Card,
 } from "antd";
 import {
   EditOutlined,
@@ -75,7 +76,16 @@ export default function CondominiosIndex() {
 
   const columns = [
     { title: "ID", dataIndex: "id", key: "id" },
-    { title: "Nombre", dataIndex: "name", key: "name" },
+    {
+      title: "Nombre",
+      dataIndex: "name",
+      key: "name",
+      render: (text: string) => (
+        <span className="text-sm text-gray-800 hover:text-sky-600 transition-colors duration-200 cursor-pointer">
+          {text}
+        </span>
+      ),
+    },
     { title: "Dirección", dataIndex: "address", key: "address" },
     { title: "Email", dataIndex: "email", key: "email" },
     { title: "Teléfono", dataIndex: "phone", key: "phone" },
@@ -89,10 +99,12 @@ export default function CondominiosIndex() {
       title: "Administrador",
       key: "admin",
       render: (_: unknown, condominio: Condominio) => (
-        <>
-          <div>{condominio.adminId?.name}</div>
+        <div>
+          <div className="text-sm font-medium text-gray-800">
+            {condominio.adminId?.name}
+          </div>
           <div className="text-xs text-gray-500">{condominio.adminId?.email}</div>
-        </>
+        </div>
       ),
     },
     {
@@ -133,7 +145,6 @@ export default function CondominiosIndex() {
               }
             />
           </Popconfirm>
-          {/* Botón para reporte detallado */}
           <Button
             onClick={() => {
               setSelectedId(condominio._id);
@@ -150,7 +161,7 @@ export default function CondominiosIndex() {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-2xl font-bold mb-4 text-black">Condominios</h1>
+      <h1 className="text-2xl font-bold mb-6 text-gray-800">Condominios</h1>
 
       <div className="mb-4 flex justify-end gap-2">
         <Link href="/superadmin/condominios/insert">
@@ -168,13 +179,18 @@ export default function CondominiosIndex() {
         </Button>
       </div>
 
-      <Table
-        columns={columns}
-        dataSource={condominios}
-        rowKey="_id"
-        loading={loading}
-        pagination={{ pageSize: 10 }}
-      />
+      <Card className="shadow-sm border border-gray-200 rounded-md">
+        <Table
+          columns={columns}
+          dataSource={condominios}
+          rowKey="_id"
+          loading={loading}
+          pagination={{ pageSize: 10 }}
+          rowClassName={() =>
+            "hover:bg-gray-50 transition duration-150 ease-in-out"
+          }
+        />
+      </Card>
 
       <ModalReporte
         open={visible}
