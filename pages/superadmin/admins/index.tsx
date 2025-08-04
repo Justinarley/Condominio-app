@@ -124,6 +124,7 @@ export default function AdminsIndex() {
     {
       title: "Acciones",
       key: "acciones",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       render: (_: any, admin: Admin) => (
         <Space.Compact>
           <Link href={`/superadmin/admins/${admin._id}/edit`}>

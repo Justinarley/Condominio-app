@@ -9,6 +9,8 @@ import {
 import { Dropdown } from "antd";
 import { useRouter } from "next/router";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { PieChartOutlined } from "@ant-design/icons";
+import { JSX } from "react";
 
 export default function Navbar() {
   const router = useRouter();
@@ -62,10 +64,7 @@ export default function Navbar() {
       {/* Contenedor izquierdo (logo + enlaces) */}
       <div className="flex items-center gap-6">
         {/* Logo + nombre */}
-        <div
-          className="flex gap-2 items-center cursor-pointer"
-          onClick={() => router.push("/")}
-        >
+        <div className="flex gap-2 items-center cursor-pointer">
           <Building2 size={24} className="text-white" />
           <span className="text-base font-semibold text-white tracking-wide">
             App
@@ -93,24 +92,25 @@ export default function Navbar() {
               />
             </>
           )}
-        {user?.role === "admin" && (
-          <>
-            <div
-              className="cursor-pointer hover:text-green-400 transition"
-              onClick={() => router.push("/admin/dashboard")}
-            >
-              <PieChartOutlined className="mr-1" />
-              Dashboard
-            </div>
-                       <NavItem
-              icon={<Home size={18} className="text-white" />}
-              label="Mi Condominio"
-              path="/admin"
-            />
-          </>
-        )}
-      </div>
-
+          {user?.role === "admin" && (
+            <>
+              <div
+                className="cursor-pointer hover:text-green-400 transition flex items-center gap-1"
+                onClick={() => router.push("/admin/dashboard")}
+              >
+                <PieChartOutlined className="text-white" />
+                <span>Dashboard</span>
+              </div>
+              <NavItem
+                icon={<Home size={18} className="text-white" />}
+                label="Mi Condominio"
+                path="/admin"
+              />
+            </>
+          )}
+        </div>
+      </div>{" "}
+      {/* <-- Este cierre te faltaba */}
       {/* Usuario (derecha) */}
       {user && (
         <Dropdown menu={{ items: menuItems }} placement="bottomRight" arrow>

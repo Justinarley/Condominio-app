@@ -103,8 +103,7 @@ const CondominioFormPage: React.FC = () => {
         message.success("Condominio creado");
       }
       router.push("/superadmin/condominios");
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       message.error(
         error.response?.data?.message || "Error al guardar condominio"
@@ -129,9 +128,7 @@ const CondominioFormPage: React.FC = () => {
           className="space-y-8"
           requiredMark={false}
         >
-          {/* Grid con 2 columnas para la mayoría */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {/* ID */}
             <Form.Item
               label={<span className="font-medium text-gray-600">ID personalizado (Ej: CND-001)</span>}
               name="id"
@@ -143,93 +140,62 @@ const CondominioFormPage: React.FC = () => {
                 },
               ]}
             >
-              <Input
-                disabled={isEditing}
-                placeholder="CND-001"
-                className="rounded-lg border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-400 transition"
-              />
+              <Input disabled={isEditing} placeholder="CND-001" />
             </Form.Item>
 
-            {/* Nombre */}
             <Form.Item
-              label={<span className="font-medium text-gray-600">Nombre</span>}
+              label="Nombre"
               name="name"
               rules={[{ required: true, message: "Ingresa el nombre" }]}
             >
-              <Input
-                placeholder="Nombre del condominio"
-                className="rounded-lg border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-400 transition"
-              />
+              <Input placeholder="Nombre del condominio" />
             </Form.Item>
 
-            {/* Dirección */}
             <Form.Item
-              label={<span className="font-medium text-gray-600">Dirección</span>}
+              label="Dirección"
               name="address"
               rules={[{ required: true, message: "Ingresa la dirección" }]}
             >
-              <Input
-                placeholder="Ciudad, Calle, Nº"
-                className="rounded-lg border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-400 transition"
-              />
+              <Input placeholder="Ciudad, Calle, Nº" />
             </Form.Item>
 
-            {/* Email */}
             <Form.Item
-              label={<span className="font-medium text-gray-600">Email</span>}
+              label="Email"
               name="email"
               rules={[
                 { required: true, message: "Ingresa el email" },
                 { type: "email", message: "Email inválido" },
               ]}
             >
-              <Input
-                placeholder="ejemplo@mail.com"
-                className="rounded-lg border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-400 transition"
-              />
+              <Input placeholder="ejemplo@mail.com" />
             </Form.Item>
 
-            {/* Teléfono */}
             <Form.Item
-              label={<span className="font-medium text-gray-600">Teléfono</span>}
+              label="Teléfono"
               name="phone"
               rules={[{ required: true, message: "Ingresa el teléfono" }]}
             >
-              <Input
-                placeholder="+593 9XXXXXXX"
-                className="rounded-lg border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-400 transition"
-              />
+              <Input placeholder="+593 9XXXXXXX" />
             </Form.Item>
 
-            {/* Tipo */}
             <Form.Item
-              label={<span className="font-medium text-gray-600">Tipo de Condominio</span>}
+              label="Tipo de Condominio"
               name="tipo"
               rules={[{ required: true }]}
             >
-              <Select
-                onChange={(val) => setTipo(val)}
-                disabled={isEditing}
-                className="rounded-lg shadow-sm"
-                popupClassName="rounded-lg"
-              >
+              <Select onChange={(val) => setTipo(val)} disabled={isEditing}>
                 <Option value="torres">Torres</Option>
                 <Option value="casas">Casas</Option>
               </Select>
             </Form.Item>
           </div>
 
-          {/* Campo Admin full ancho */}
           <Form.Item
-            label={<span className="font-medium text-gray-600">Administrador</span>}
+            label="Administrador"
             name="adminId"
             rules={[{ required: true, message: "Selecciona un administrador" }]}
           >
-            <Select
-              placeholder="Selecciona un administrador"
-              className="rounded-lg shadow-sm"
-              popupClassName="rounded-lg"
-            >
+            <Select placeholder="Selecciona un administrador">
               {admins.map((admin) => (
                 <Option key={admin._id} value={admin._id}>
                   {admin.name} ({admin.email})
@@ -238,10 +204,9 @@ const CondominioFormPage: React.FC = () => {
             </Select>
           </Form.Item>
 
-          {/* Torres */}
           {tipo === "torres" && (
             <>
-              <Divider className="my-8 text-indigo-600 font-semibold">Torres</Divider>
+              <Divider>Torres</Divider>
               <Form.List name="torres">
                 {(fields, { add, remove }) => (
                   <>
@@ -249,47 +214,32 @@ const CondominioFormPage: React.FC = () => {
                       <Card
                         key={key}
                         title={`Torre #${name + 1}`}
-                        className="mb-6 shadow-md rounded-xl"
+                        className="mb-4"
                         extra={
                           <MinusCircleOutlined
                             onClick={() => remove(name)}
-                            className="text-red-600 hover:text-red-500 cursor-pointer transition"
-                            style={{ fontSize: 20 }}
+                            className="text-red-500"
                           />
                         }
                       >
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <Form.Item
-                            label="Identificador"
-                            name={[name, "identificador"]}
-                            rules={[{ required: true, message: "Requerido" }]}
-                          >
-                            <Input
-                              placeholder="Ej. Torre A"
-                              className="rounded-lg border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-400 transition"
-                            />
-                          </Form.Item>
-                          <Form.Item
-                            label="Cantidad de Departamentos"
-                            name={[name, "departamentos"]}
-                            rules={[{ required: true, message: "Requerido" }]}
-                          >
-                            <InputNumber
-                              min={1}
-                              className="w-full rounded-lg border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-400 transition"
-                            />
-                          </Form.Item>
-                        </div>
+                        <Form.Item
+                          label="Identificador"
+                          name={[name, "identificador"]}
+                          rules={[{ required: true }]}
+                        >
+                          <Input placeholder="Ej. Torre A" />
+                        </Form.Item>
+                        <Form.Item
+                          label="Departamentos"
+                          name={[name, "departamentos"]}
+                          rules={[{ required: true }]}
+                        >
+                          <InputNumber min={1} style={{ width: "100%" }} />
+                        </Form.Item>
                       </Card>
                     ))}
                     <Form.Item>
-                      <Button
-                        type="dashed"
-                        onClick={() => add()}
-                        block
-                        icon={<PlusOutlined />}
-                        className="rounded-lg border-indigo-500 text-indigo-600 hover:bg-indigo-50 transition"
-                      >
+                      <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
                         Agregar Torre
                       </Button>
                     </Form.Item>
@@ -299,10 +249,9 @@ const CondominioFormPage: React.FC = () => {
             </>
           )}
 
-          {/* Casas */}
           {tipo === "casas" && (
             <>
-              <Divider className="my-8 text-indigo-600 font-semibold">Casas</Divider>
+              <Divider>Casas</Divider>
               <Form.List name="casas">
                 {(fields, { add, remove }) => (
                   <>
@@ -310,47 +259,32 @@ const CondominioFormPage: React.FC = () => {
                       <Card
                         key={key}
                         title={`Bloque de Casas #${name + 1}`}
-                        className="mb-6 shadow-md rounded-xl"
+                        className="mb-4"
                         extra={
                           <MinusCircleOutlined
                             onClick={() => remove(name)}
-                            className="text-red-600 hover:text-red-500 cursor-pointer transition"
-                            style={{ fontSize: 20 }}
+                            className="text-red-500"
                           />
                         }
                       >
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <Form.Item
-                            label="Identificador"
-                            name={[name, "identificador"]}
-                            rules={[{ required: true, message: "Requerido" }]}
-                          >
-                            <Input
-                              placeholder="Ej. Bloque 1"
-                              className="rounded-lg border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-400 transition"
-                            />
-                          </Form.Item>
-                          <Form.Item
-                            label="Cantidad de Casas"
-                            name={[name, "cantidad"]}
-                            rules={[{ required: true, message: "Requerido" }]}
-                          >
-                            <InputNumber
-                              min={1}
-                              className="w-full rounded-lg border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-400 transition"
-                            />
-                          </Form.Item>
-                        </div>
+                        <Form.Item
+                          label="Identificador"
+                          name={[name, "identificador"]}
+                          rules={[{ required: true }]}
+                        >
+                          <Input placeholder="Ej. Bloque 1" />
+                        </Form.Item>
+                        <Form.Item
+                          label="Cantidad"
+                          name={[name, "cantidad"]}
+                          rules={[{ required: true }]}
+                        >
+                          <InputNumber min={1} style={{ width: "100%" }} />
+                        </Form.Item>
                       </Card>
                     ))}
                     <Form.Item>
-                      <Button
-                        type="dashed"
-                        onClick={() => add()}
-                        block
-                        icon={<PlusOutlined />}
-                        className="rounded-lg border-indigo-500 text-indigo-600 hover:bg-indigo-50 transition"
-                      >
+                      <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
                         Agregar Casas
                       </Button>
                     </Form.Item>
@@ -359,6 +293,64 @@ const CondominioFormPage: React.FC = () => {
               </Form.List>
             </>
           )}
+
+          <Divider>Áreas Comunes</Divider>
+          <Form.List name="areasComunes">
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name }) => (
+                  <Card
+                    key={key}
+                    title={`Área Común #${name + 1}`}
+                    className="mb-4"
+                    extra={
+                      <MinusCircleOutlined
+                        onClick={() => remove(name)}
+                        className="text-red-500"
+                      />
+                    }
+                  >
+                    <Form.Item
+                      label="Nombre"
+                      name={[name, "nombre"]}
+                      rules={[{ required: true, message: "Requerido" }]}
+                    >
+                      <Input />
+                    </Form.Item>
+
+                    <Form.Item
+                      label="Estado"
+                      name={[name, "estado"]}
+                      rules={[{ required: true, message: "Requerido" }]}
+                    >
+                      <Select>
+                        <Option value="libre">Libre</Option>
+                        <Option value="ocupado">Ocupado</Option>
+                      </Select>
+                    </Form.Item>
+
+                    <Form.Item label="Descripción" name={[name, "descripcion"]}>
+                      <Input.TextArea />
+                    </Form.Item>
+
+                    <Form.Item label="Capacidad" name={[name, "capacidad"]}>
+                      <InputNumber min={1} style={{ width: "100%" }} />
+                    </Form.Item>
+                  </Card>
+                ))}
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
+                  >
+                    Agregar Área Común
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
 
           <Form.Item className="pt-6">
             <Space className="w-full justify-center space-x-6">
@@ -370,79 +362,17 @@ const CondominioFormPage: React.FC = () => {
               >
                 {isEditing ? "Actualizar" : "Registrar"}
               </Button>
-        <Divider>Áreas Comunes</Divider>
-        <Form.List name="areasComunes">
-          {(fields, { add, remove }) => (
-            <>
-              {fields.map(({ key, name }) => (
-                <Card
-                  key={key}
-                  title={`Área Común #${name + 1}`}
-                  className="mb-4"
-                  extra={
-                    <MinusCircleOutlined
-                      onClick={() => remove(name)}
-                      className="text-red-500"
-                    />
-                  }
-                >
-                  <Form.Item
-                    label="Nombre"
-                    name={[name, "nombre"]}
-                    rules={[{ required: true, message: "Requerido" }]}
-                  >
-                    <Input />
-                  </Form.Item>
-
-                  <Form.Item
-                    label="Estado"
-                    name={[name, "estado"]}
-                    rules={[{ required: true, message: "Requerido" }]}
-                  >
-                    <Select>
-                      <Option value="libre">Libre</Option>
-                      <Option value="ocupado">Ocupado</Option>
-                    </Select>
-                  </Form.Item>
-
-                  <Form.Item label="Descripción" name={[name, "descripcion"]}>
-                    <Input.TextArea />
-                  </Form.Item>
-
-                  <Form.Item label="Capacidad" name={[name, "capacidad"]}>
-                    <InputNumber min={1} style={{ width: "100%" }} />
-                  </Form.Item>
-                </Card>
-              ))}
-              <Form.Item>
-                <Button
-                  type="dashed"
-                  onClick={() => add()}
-                  block
-                  icon={<PlusOutlined />}
-                >
-                  Agregar Área Común
-                </Button>
-              </Form.Item>
-            </>
-          )}
-        </Form.List>
-
-        <Form.Item>
-          <Space>
-            <Button type="primary" htmlType="submit" loading={loading}>
-              {isEditing ? "Actualizar" : "Registrar"}
-            </Button>
-            <Button 
-              onClick={() => router.push("/superadmin/condominios")}
-               className="w-full sm:w-auto border border-gray-300 hover:bg-gray-100 rounded-lg transition"
+              <Button
+                onClick={() => router.push("/superadmin/condominios")}
+                className="w-full sm:w-auto border border-gray-300 hover:bg-gray-100 rounded-lg transition"
               >
-              Cancelar
-            </Button>
-          </Space>
-        </Form.Item>
-      </Form>
-    </>
+                Cancelar
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </div>
+    </div>
   );
 };
 

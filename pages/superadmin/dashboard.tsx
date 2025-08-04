@@ -1,19 +1,9 @@
 import { useEffect, useState } from "react";
 import api from "@/libs/axios";
-import {
-  Card,
-  Table,
-  Tag,
-  Typography,
-  Row,
-  Col,
-} from "antd";
-import {
-  UserOutlined,
-  HomeOutlined,
-  ApartmentOutlined,
-  CheckCircleOutlined,
-} from "@ant-design/icons";
+import { Table, Tag, Typography, Row, Col } from "antd";
+import { UserOutlined, CheckCircleOutlined } from "@ant-design/icons";
+import { Building2, Home } from "lucide-react";
+import { useRouter } from "next/router";
 
 const { Title, Text } = Typography;
 
@@ -37,6 +27,7 @@ type Condominio = {
 };
 
 export default function SuperAdminDashboard() {
+  const router = useRouter();
   const [admins, setAdmins] = useState<Admin[]>([]);
   const [adminsActivos, setAdminsActivos] = useState<Admin[]>([]);
   const [condominios, setCondominios] = useState<Condominio[]>([]);
@@ -55,6 +46,8 @@ export default function SuperAdminDashboard() {
 
     fetchData();
   }, []);
+  const cantidadTorres = condominios.filter((c) => c.tipo === "torres").length;
+  const cantidadCasas = condominios.filter((c) => c.tipo === "casas").length;
 
   const StatCard = ({
     icon,
@@ -62,22 +55,32 @@ export default function SuperAdminDashboard() {
     value,
     extra,
     iconColor = "bg-blue-100 text-blue-500",
+    onClick,
   }: {
     icon: React.ReactNode;
     title: string;
     value: string | number;
     extra?: string;
     iconColor?: string;
+    onClick?: () => void;
   }) => (
-    <div className="w-full bg-white rounded-xl p-5 shadow-md hover:shadow-lg transition duration-200 cursor-pointer">
+    <div
+      onClick={onClick}
+      className={`w-full bg-white rounded-xl p-5 shadow-md hover:shadow-lg transition duration-200 ${
+        onClick ? "cursor-pointer hover:bg-gray-100" : ""
+      }`}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyPress={(e) => {
+        if (onClick && (e.key === "Enter" || e.key === " ")) onClick();
+      }}
+    >
       <div className="flex items-start gap-4">
         <div className={`p-3 rounded-full text-xl ${iconColor}`}>{icon}</div>
         <div className="flex-1">
           <div className="text-xl font-semibold text-gray-800">{value}</div>
           <div className="text-gray-500">{title}</div>
-          {extra && (
-            <div className="text-xs text-gray-400 mt-1">{extra}</div>
-          )}
+          {extra && <div className="text-xs text-gray-400 mt-1">{extra}</div>}
         </div>
       </div>
     </div>
@@ -90,44 +93,56 @@ export default function SuperAdminDashboard() {
       </Title>
 
       <Row gutter={[20, 20]} className="mb-12">
-        <Col xs={24} sm={12} md={6}>
+        <Col xs={24} sm={12} md={5}>
           <StatCard
             icon={<UserOutlined />}
-            title="Propietarios"
+            title="Administradores"
             value={admins.length}
+            onClick={() => router.push("/superadmin/admins")}
             extra={`Activos: ${adminsActivos.length} / Inactivos: ${
               admins.length - adminsActivos.length
             }`}
           />
         </Col>
 
-        <Col xs={24} sm={12} md={6}>
+        <Col xs={24} sm={12} md={5}>
           <StatCard
-            icon={<HomeOutlined />}
-            title="Residentes"
-            value={admins.length} 
-            extra="Actualización pendiente"
-            iconColor="bg-purple-100 text-purple-500"
-          />
-        </Col>
-
-        <Col xs={24} sm={12} md={6}>
-          <StatCard
-            icon={<ApartmentOutlined />}
+            icon={<Building2 />}
             title="Condominios"
             value={condominios.length}
             extra="Actualización pendiente"
             iconColor="bg-green-100 text-green-500"
+            onClick={() => router.push("/superadmin/condominios")}
           />
         </Col>
 
-        <Col xs={24} sm={12} md={6}>
+        <Col xs={24} sm={12} md={5}>
           <StatCard
             icon={<CheckCircleOutlined />}
             title="Condominios Activos"
             value={condominios.filter((c) => c.status === "active").length}
             extra="Actualización pendiente"
             iconColor="bg-yellow-100 text-yellow-500"
+          />
+        </Col>
+
+        <Col xs={24} sm={12} md={4}>
+          <StatCard
+            icon={<Building2 />}
+            title="Tipo Torres"
+            value={cantidadTorres}
+            extra="Condominios tipo torre"
+            iconColor="bg-indigo-100 text-indigo-500"
+          />
+        </Col>
+
+        <Col xs={24} sm={12} md={4}>
+          <StatCard
+            icon={<Home />}
+            title="Tipo Casas"
+            value={cantidadCasas}
+            extra="Condominios tipo casa"
+            iconColor="bg-pink-100 text-pink-500"
           />
         </Col>
       </Row>

@@ -55,6 +55,7 @@ export default function Register() {
     form.setFieldsValue({ departamentoId: undefined });
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
