@@ -93,15 +93,22 @@ export default function Navbar() {
               />
             </>
           )}
-
-          {user?.role === "admin" && (
-            <NavItem
+        {user?.role === "admin" && (
+          <>
+            <div
+              className="cursor-pointer hover:text-green-400 transition"
+              onClick={() => router.push("/admin/dashboard")}
+            >
+              <PieChartOutlined className="mr-1" />
+              Dashboard
+            </div>
+                       <NavItem
               icon={<Home size={18} className="text-white" />}
               label="Mi Condominio"
               path="/admin"
             />
-          )}
-        </div>
+          </>
+        )}
       </div>
 
       {/* Usuario (derecha) */}
