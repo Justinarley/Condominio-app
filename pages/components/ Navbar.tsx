@@ -5,11 +5,11 @@ import {
   Building2,
   LayoutDashboard,
   LogOut,
+  Shield,
 } from "lucide-react";
 import { Dropdown } from "antd";
 import { useRouter } from "next/router";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { PieChartOutlined } from "@ant-design/icons";
 import { JSX } from "react";
 
 export default function Navbar() {
@@ -61,9 +61,8 @@ export default function Navbar() {
 
   return (
     <nav className="bg-sky-600 px-4 py-2 flex items-center justify-between shadow-sm">
-      {/* Contenedor izquierdo (logo + enlaces) */}
+
       <div className="flex items-center gap-6">
-        {/* Logo + nombre */}
         <div className="flex gap-2 items-center cursor-pointer">
           <Building2 size={24} className="text-white" />
           <span className="text-base font-semibold text-white tracking-wide">
@@ -71,7 +70,6 @@ export default function Navbar() {
           </span>
         </div>
 
-        {/* Enlaces de navegación */}
         <div className="flex gap-2">
           {user?.role === "super_admin" && (
             <>
@@ -94,13 +92,21 @@ export default function Navbar() {
           )}
           {user?.role === "admin" && (
             <>
-              <div
-                className="cursor-pointer hover:text-green-400 transition flex items-center gap-1"
-                onClick={() => router.push("/admin/dashboard")}
-              >
-                <PieChartOutlined className="text-white" />
-                <span>Dashboard</span>
-              </div>
+              <NavItem
+                icon={<LayoutDashboard size={18} className="text-white" />}
+                label="Dashboard"
+                path="/admin/dashboard"
+              />
+              <NavItem
+                icon={<Users size={18} className="text-white" />}
+                label="Propietarios"
+                path="/admin/propietarios"
+              />
+              <NavItem
+                icon={<Shield size={18} className="text-white" />}
+                label="Guardias"
+                path="/admin/security"
+              />
               <NavItem
                 icon={<Home size={18} className="text-white" />}
                 label="Mi Condominio"
@@ -109,9 +115,7 @@ export default function Navbar() {
             </>
           )}
         </div>
-      </div>{" "}
-      {/* <-- Este cierre te faltaba */}
-      {/* Usuario (derecha) */}
+      </div>
       {user && (
         <Dropdown menu={{ items: menuItems }} placement="bottomRight" arrow>
           <div className="flex items-center gap-2 text-white text-sm font-medium cursor-pointer hover:scale-105 transition-transform">

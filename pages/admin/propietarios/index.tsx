@@ -1,17 +1,23 @@
 import { useEffect, useState } from "react";
-import { Table, Button, Space, Tag, message, Popconfirm, Card } from "antd";
 import {
-  EditOutlined,
+  Table,
+  Button,
+  Space,
+  Tag,
+  message,
+  Popconfirm,
+  Card,
+} from "antd";
+import {
   CheckOutlined,
   CloseOutlined,
   LockOutlined,
 } from "@ant-design/icons";
 import api from "@/libs/axios";
-import Link from "next/link";
 import { ModalReporte } from "@/pages/components/Reportes";
 import ResetPasswordModal from "@/pages/components/ResetPassword";
 
-type Admin = {
+type Propietario = {
   _id: string;
   name: string;
   email: string;
@@ -21,71 +27,62 @@ type Admin = {
   status: "active" | "inactive";
 };
 
-export default function AdminsIndex() {
-  const [admins, setAdmins] = useState<Admin[]>([]);
+export default function PropietariosIndex() {
+  const [usuarios, setUsuarios] = useState<Propietario[]>([]);
   const [loading, setLoading] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const [selectedAdminId, setSelectedAdminId] = useState<string | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
 
-  const fetchAdmins = async () => {
+  const fetchUsuarios = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/admins");
-      setAdmins(res.data);
+      const res = await api.get("/admin/propietarios-activos");
+      setUsuarios(res.data);
     } catch {
-      message.error("Error al cargar administradores");
+      message.error("Error al cargar propietarios");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchAdmins();
+    fetchUsuarios();
   }, []);
 
-  const toggleStatus = async (admin: Admin) => {
-    const newStatus = admin.status === "active" ? "inactive" : "active";
+  const toggleStatus = async (user: Propietario) => {
+    const newStatus = user.status === "active" ? "inactive" : "active";
     try {
-      await api.put(`/admins/${admin._id}/status`, { status: newStatus });
+      await api.put(`/usuarios/${user._id}/status`, { status: newStatus });
       message.success(
-        `Administrador ${newStatus === "active" ? "activado" : "desactivado"}`
+        `Usuario ${newStatus === "active" ? "activado" : "desactivado"}`
       );
-      fetchAdmins();
+      fetchUsuarios();
     } catch {
       message.error("Error al actualizar estado");
     }
   };
 
-  const openPasswordModal = (adminId: string) => {
-    setSelectedAdminId(adminId);
+  const openPasswordModal = (userId: string) => {
+    setSelectedUserId(userId);
     setIsPasswordModalOpen(true);
   };
 
   const closePasswordModal = () => {
-    setSelectedAdminId(null);
+    setSelectedUserId(null);
     setIsPasswordModalOpen(false);
   };
 
   const columns = [
     {
-      title: "Nombre",
-      dataIndex: "name",
-      key: "name",
-      render: (text: string) => (
-        <span className="text-sm text-gray-800 hover:text-sky-600 transition-colors duration-200 cursor-pointer">
-          {text}
-        </span>
-      ),
-    },
-    { title: "Email", dataIndex: "email", key: "email" },
-    { title: "Teléfono", dataIndex: "phone", key: "phone" },
-    { title: "Dirección", dataIndex: "address", key: "address" },
-    {
       title: "Identificación",
       dataIndex: "identification",
       key: "identification",
     },
+    { title: "Nombre", dataIndex: "name", key: "name" },
+    { title: "Email", dataIndex: "email", key: "email" },
+    { title: "Teléfono", dataIndex: "phone", key: "phone" },
+
     {
       title: "Estado",
       dataIndex: "status",
@@ -98,35 +95,38 @@ export default function AdminsIndex() {
         ),
     },
     {
+      title: "Condominio",
+      dataIndex: "condominioNombre",
+      key: "condominioNombre",
+    },
+    {
+      title: "Departamento",
+      dataIndex: "departamentoCodigo",
+      key: "departamentoCodigo",
+    },
+    {
       title: "Acciones",
       key: "acciones",
-      render: (_: unknown, admin: Admin) => (
+      render: (_: unknown, user: Propietario) => (
         <Space.Compact>
-          <Link href={`/superadmin/admins/${admin._id}/edit`}>
-            <Button icon={<EditOutlined />} />
-          </Link>
           <Popconfirm
             title={`¿Seguro que quieres ${
-              admin.status === "active" ? "desactivar" : "activar"
-            } este admin?`}
-            onConfirm={() => toggleStatus(admin)}
+              user.status === "active" ? "desactivar" : "activar"
+            } este usuario?`}
+            onConfirm={() => toggleStatus(user)}
             okText="Sí"
             cancelText="No"
           >
             <Button
-              type={admin.status === "active" ? "default" : "primary"}
+              type={user.status === "active" ? "default" : "primary"}
               icon={
-                admin.status === "active" ? (
-                  <CloseOutlined />
-                ) : (
-                  <CheckOutlined />
-                )
+                user.status === "active" ? <CloseOutlined /> : <CheckOutlined />
               }
             />
           </Popconfirm>
           <Button
             icon={<LockOutlined />}
-            onClick={() => openPasswordModal(admin._id)}
+            onClick={() => openPasswordModal(user._id)}
           />
         </Space.Compact>
       ),
@@ -135,24 +135,21 @@ export default function AdminsIndex() {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">Administradores</h1>
+      <h1 className="text-2xl font-bold mb-6 text-gray-800">Propietarios</h1>
 
       <div className="mb-4 flex justify-end gap-2">
-        <Link href="/superadmin/admins/insert">
-          <Button type="primary">Insertar</Button>
-        </Link>
         <Button onClick={() => setVisible(true)}>Reporte</Button>
         <ModalReporte
           open={visible}
           onClose={() => setVisible(false)}
-          endpoint="/reportes/admins/excel"
+          endpoint="/reportes/propietarios/excel"
         />
       </div>
 
       <Card className="shadow-sm border border-gray-200 rounded-md">
         <Table
           columns={columns}
-          dataSource={admins}
+          dataSource={usuarios}
           rowKey="_id"
           loading={loading}
           pagination={{ pageSize: 10 }}
@@ -161,11 +158,12 @@ export default function AdminsIndex() {
           }
         />
       </Card>
+      
       <ResetPasswordModal
         open={isPasswordModalOpen}
         onClose={closePasswordModal}
-        userId={selectedAdminId}
-        userType="admins"
+        userId={selectedUserId}
+        userType="usuarios"
       />
     </div>
   );

@@ -1,91 +1,88 @@
 import { useEffect, useState } from "react";
-import { Table, Button, Space, Tag, message, Popconfirm, Card } from "antd";
 import {
-  EditOutlined,
+  Table,
+  Button,
+  Space,
+  Tag,
+  message,
+  Popconfirm,
+  Card,
+} from "antd";
+import {
   CheckOutlined,
   CloseOutlined,
   LockOutlined,
 } from "@ant-design/icons";
 import api from "@/libs/axios";
-import Link from "next/link";
 import { ModalReporte } from "@/pages/components/Reportes";
 import ResetPasswordModal from "@/pages/components/ResetPassword";
 
-type Admin = {
+type Guardia = {
   _id: string;
   name: string;
   email: string;
   phone: string;
-  address: string;
-  identification: string;
+  identificationNumber: string;
   status: "active" | "inactive";
+  role: string;
+  condominioNombre: string | null;
 };
 
-export default function AdminsIndex() {
-  const [admins, setAdmins] = useState<Admin[]>([]);
+export default function GuardiasIndex() {
+  const [guardias, setGuardias] = useState<Guardia[]>([]);
   const [loading, setLoading] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const [selectedAdminId, setSelectedAdminId] = useState<string | null>(null);
+  const [selectedGuardiaId, setSelectedGuardiaId] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
 
-  const fetchAdmins = async () => {
+  const fetchGuardias = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/admins");
-      setAdmins(res.data);
+      const res = await api.get("/admin/guardias-activos");
+      setGuardias(res.data);
     } catch {
-      message.error("Error al cargar administradores");
+      message.error("Error al cargar guardias");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchAdmins();
+    fetchGuardias();
   }, []);
 
-  const toggleStatus = async (admin: Admin) => {
-    const newStatus = admin.status === "active" ? "inactive" : "active";
+  const toggleStatus = async (guardia: Guardia) => {
+    const newStatus = guardia.status === "active" ? "inactive" : "active";
     try {
-      await api.put(`/admins/${admin._id}/status`, { status: newStatus });
+      await api.put(`/usuarios/${guardia._id}/status`, { status: newStatus });
       message.success(
-        `Administrador ${newStatus === "active" ? "activado" : "desactivado"}`
+        `Usuario ${newStatus === "active" ? "activado" : "desactivado"}`
       );
-      fetchAdmins();
+      fetchGuardias();
     } catch {
       message.error("Error al actualizar estado");
     }
   };
 
-  const openPasswordModal = (adminId: string) => {
-    setSelectedAdminId(adminId);
+  const openPasswordModal = (guardiaId: string) => {
+    setSelectedGuardiaId(guardiaId);
     setIsPasswordModalOpen(true);
   };
 
   const closePasswordModal = () => {
-    setSelectedAdminId(null);
+    setSelectedGuardiaId(null);
     setIsPasswordModalOpen(false);
   };
 
   const columns = [
     {
-      title: "Nombre",
-      dataIndex: "name",
-      key: "name",
-      render: (text: string) => (
-        <span className="text-sm text-gray-800 hover:text-sky-600 transition-colors duration-200 cursor-pointer">
-          {text}
-        </span>
-      ),
+      title: "Identificación",
+      dataIndex: "identificationNumber",
+      key: "identificationNumber",
     },
+    { title: "Nombre", dataIndex: "name", key: "name" },
     { title: "Email", dataIndex: "email", key: "email" },
     { title: "Teléfono", dataIndex: "phone", key: "phone" },
-    { title: "Dirección", dataIndex: "address", key: "address" },
-    {
-      title: "Identificación",
-      dataIndex: "identification",
-      key: "identification",
-    },
     {
       title: "Estado",
       dataIndex: "status",
@@ -98,35 +95,33 @@ export default function AdminsIndex() {
         ),
     },
     {
+      title: "Condominio",
+      dataIndex: "condominioNombre",
+      key: "condominioNombre",
+    },
+    {
       title: "Acciones",
       key: "acciones",
-      render: (_: unknown, admin: Admin) => (
+      render: (_: unknown, guardia: Guardia) => (
         <Space.Compact>
-          <Link href={`/superadmin/admins/${admin._id}/edit`}>
-            <Button icon={<EditOutlined />} />
-          </Link>
           <Popconfirm
             title={`¿Seguro que quieres ${
-              admin.status === "active" ? "desactivar" : "activar"
-            } este admin?`}
-            onConfirm={() => toggleStatus(admin)}
+              guardia.status === "active" ? "desactivar" : "activar"
+            } este usuario?`}
+            onConfirm={() => toggleStatus(guardia)}
             okText="Sí"
             cancelText="No"
           >
             <Button
-              type={admin.status === "active" ? "default" : "primary"}
+              type={guardia.status === "active" ? "default" : "primary"}
               icon={
-                admin.status === "active" ? (
-                  <CloseOutlined />
-                ) : (
-                  <CheckOutlined />
-                )
+                guardia.status === "active" ? <CloseOutlined /> : <CheckOutlined />
               }
             />
           </Popconfirm>
           <Button
             icon={<LockOutlined />}
-            onClick={() => openPasswordModal(admin._id)}
+            onClick={() => openPasswordModal(guardia._id)}
           />
         </Space.Compact>
       ),
@@ -135,24 +130,21 @@ export default function AdminsIndex() {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">Administradores</h1>
+      <h1 className="text-2xl font-bold mb-6 text-gray-800">Guardias</h1>
 
       <div className="mb-4 flex justify-end gap-2">
-        <Link href="/superadmin/admins/insert">
-          <Button type="primary">Insertar</Button>
-        </Link>
         <Button onClick={() => setVisible(true)}>Reporte</Button>
         <ModalReporte
           open={visible}
           onClose={() => setVisible(false)}
-          endpoint="/reportes/admins/excel"
+          endpoint="/reportes/guardias/excel"
         />
       </div>
 
       <Card className="shadow-sm border border-gray-200 rounded-md">
         <Table
           columns={columns}
-          dataSource={admins}
+          dataSource={guardias}
           rowKey="_id"
           loading={loading}
           pagination={{ pageSize: 10 }}
@@ -161,11 +153,12 @@ export default function AdminsIndex() {
           }
         />
       </Card>
+
       <ResetPasswordModal
         open={isPasswordModalOpen}
         onClose={closePasswordModal}
-        userId={selectedAdminId}
-        userType="admins"
+        userId={selectedGuardiaId}
+        userType="usuarios"
       />
     </div>
   );
