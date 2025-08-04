@@ -1,6 +1,21 @@
 import { useEffect, useState } from "react";
 import api from "@/libs/axios";
-import { Card, Statistic, Row, Col, Table, Tag } from "antd";
+import {
+  Card,
+  Table,
+  Tag,
+  Typography,
+  Row,
+  Col,
+} from "antd";
+import {
+  UserOutlined,
+  HomeOutlined,
+  ApartmentOutlined,
+  CheckCircleOutlined,
+} from "@ant-design/icons";
+
+const { Title, Text } = Typography;
 
 type Admin = {
   _id: string;
@@ -41,39 +56,86 @@ export default function SuperAdminDashboard() {
     fetchData();
   }, []);
 
-  return (
-    <>
-      <h1 className="text-2xl font-bold text-black mb-6">
-        Dashboard - Super Admin
-      </h1>
+  const StatCard = ({
+    icon,
+    title,
+    value,
+    extra,
+    iconColor = "bg-blue-100 text-blue-500",
+  }: {
+    icon: React.ReactNode;
+    title: string;
+    value: string | number;
+    extra?: string;
+    iconColor?: string;
+  }) => (
+    <div className="w-full bg-white rounded-xl p-5 shadow-md hover:shadow-lg transition duration-200 cursor-pointer">
+      <div className="flex items-start gap-4">
+        <div className={`p-3 rounded-full text-xl ${iconColor}`}>{icon}</div>
+        <div className="flex-1">
+          <div className="text-xl font-semibold text-gray-800">{value}</div>
+          <div className="text-gray-500">{title}</div>
+          {extra && (
+            <div className="text-xs text-gray-400 mt-1">{extra}</div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 
-      <Row gutter={16} className="mb-8">
-        <Col xs={24} md={6}>
-          <Card>
-            <Statistic title="Total de Admins" value={admins.length} />
-          </Card>
+  return (
+    <div className="p-8 bg-gray-50 min-h-screen">
+      <Title level={2} className="!text-gray-800 mb-10">
+        Panel de Control - Super Admin
+      </Title>
+
+      <Row gutter={[20, 20]} className="mb-12">
+        <Col xs={24} sm={12} md={6}>
+          <StatCard
+            icon={<UserOutlined />}
+            title="Propietarios"
+            value={admins.length}
+            extra={`Activos: ${adminsActivos.length} / Inactivos: ${
+              admins.length - adminsActivos.length
+            }`}
+          />
         </Col>
-        <Col xs={24} md={6}>
-          <Card>
-            <Statistic title="Admins Activos" value={adminsActivos.length} />
-          </Card>
+
+        <Col xs={24} sm={12} md={6}>
+          <StatCard
+            icon={<HomeOutlined />}
+            title="Residentes"
+            value={admins.length} 
+            extra="Actualización pendiente"
+            iconColor="bg-purple-100 text-purple-500"
+          />
         </Col>
-        <Col xs={24} md={6}>
-          <Card>
-            <Statistic title="Condominios" value={condominios.length} />
-          </Card>
+
+        <Col xs={24} sm={12} md={6}>
+          <StatCard
+            icon={<ApartmentOutlined />}
+            title="Condominios"
+            value={condominios.length}
+            extra="Actualización pendiente"
+            iconColor="bg-green-100 text-green-500"
+          />
         </Col>
-        <Col xs={24} md={6}>
-          <Card>
-            <Statistic
-              title="Condominios Activos"
-              value={condominios.filter((c) => c.status === "active").length}
-            />
-          </Card>
+
+        <Col xs={24} sm={12} md={6}>
+          <StatCard
+            icon={<CheckCircleOutlined />}
+            title="Condominios Activos"
+            value={condominios.filter((c) => c.status === "active").length}
+            extra="Actualización pendiente"
+            iconColor="bg-yellow-100 text-yellow-500"
+          />
         </Col>
       </Row>
 
-      <Card title="Últimos Condominios Creados" className="shadow">
+      <div className="bg-white p-6 rounded-xl shadow-md">
+        <Title level={4} className="mb-6 text-gray-800">
+          Últimos Condominios Creados
+        </Title>
         <Table
           dataSource={condominios.slice(-5).reverse()}
           rowKey="_id"
@@ -82,12 +144,13 @@ export default function SuperAdminDashboard() {
             {
               title: "Nombre",
               dataIndex: "name",
+              render: (text) => <Text strong>{text}</Text>,
             },
             {
               title: "Tipo",
               dataIndex: "tipo",
               render: (text: string) => (
-                <Tag color={text === "torres" ? "blue" : "orange"}>
+                <Tag color={text === "torres" ? "geekblue" : "volcano"}>
                   {text === "torres" ? "Torres" : "Casas"}
                 </Tag>
               ),
@@ -95,28 +158,39 @@ export default function SuperAdminDashboard() {
             {
               title: "Dirección",
               dataIndex: "address",
+              render: (text) => (
+                <Text ellipsis className="max-w-[200px] block">
+                  {text}
+                </Text>
+              ),
             },
             {
-              title: "Admin",
+              title: "Administrador",
               dataIndex: ["adminId", "name"],
+              render: (name) => <Text>{name}</Text>,
             },
             {
               title: "Email Admin",
               dataIndex: ["adminId", "email"],
+              render: (email) => (
+                <Text type="secondary" className="text-xs">
+                  {email}
+                </Text>
+              ),
             },
             {
               title: "Estado",
               dataIndex: "status",
               render: (text) =>
                 text === "active" ? (
-                  <span className="text-green-600 font-semibold">Activo</span>
+                  <Tag color="green">Activo</Tag>
                 ) : (
-                  <span className="text-red-600 font-semibold">Inactivo</span>
+                  <Tag color="red">Inactivo</Tag>
                 ),
             },
           ]}
         />
-      </Card>
-    </>
+      </div>
+    </div>
   );
 }

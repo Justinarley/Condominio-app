@@ -9,6 +9,7 @@ import {
   Modal,
   Form,
   Input,
+  Card,
 } from "antd";
 import {
   EditOutlined,
@@ -44,7 +45,6 @@ export default function AdminsIndex() {
     try {
       const res = await api.get("/admins");
       setAdmins(res.data);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       message.error("Error al cargar administradores");
     } finally {
@@ -92,7 +92,16 @@ export default function AdminsIndex() {
   };
 
   const columns = [
-    { title: "Nombre", dataIndex: "name", key: "name" },
+    {
+      title: "Nombre",
+      dataIndex: "name",
+      key: "name",
+      render: (text: string) => (
+        <span className="text-sm text-gray-800 hover:text-sky-600 transition-colors duration-200 cursor-pointer">
+          {text}
+        </span>
+      ),
+    },
     { title: "Email", dataIndex: "email", key: "email" },
     { title: "Teléfono", dataIndex: "phone", key: "phone" },
     { title: "Dirección", dataIndex: "address", key: "address" },
@@ -115,7 +124,6 @@ export default function AdminsIndex() {
     {
       title: "Acciones",
       key: "acciones",
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       render: (_: any, admin: Admin) => (
         <Space.Compact>
           <Link href={`/superadmin/admins/${admin._id}/edit`}>
@@ -151,7 +159,7 @@ export default function AdminsIndex() {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-2xl font-bold mb-4 text-black">Administradores</h1>
+      <h1 className="text-2xl font-bold mb-6 text-gray-800">Administradores</h1>
 
       <div className="mb-4 flex justify-end gap-2">
         <Link href="/superadmin/admins/insert">
@@ -165,16 +173,21 @@ export default function AdminsIndex() {
         />
       </div>
 
-      <Table
-        columns={columns}
-        dataSource={admins}
-        rowKey="_id"
-        loading={loading}
-        pagination={{ pageSize: 10 }}
-      />
+      <Card className="shadow-sm border border-gray-200 rounded-md">
+        <Table
+          columns={columns}
+          dataSource={admins}
+          rowKey="_id"
+          loading={loading}
+          pagination={{ pageSize: 10 }}
+          rowClassName={() =>
+            "hover:bg-gray-50 transition duration-150 ease-in-out"
+          }
+        />
+      </Card>
 
       <Modal
-        title={`Cambiar contraseña`}
+        title="Cambiar contraseña"
         open={isPasswordModalOpen}
         onCancel={() => setIsPasswordModalOpen(false)}
         footer={null}
