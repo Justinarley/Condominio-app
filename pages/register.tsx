@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
 import api from "@/libs/axios";
-import { Form, Input, Button, Select, Radio, InputNumber, message } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Select,
+  Radio,
+  InputNumber,
+  message,
+  Space,
+} from "antd";
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 
 export enum IdentificationType {
@@ -51,7 +61,6 @@ export default function Register() {
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
-      // Excluye confirmPassword para no enviarlo al backend
       const { confirmPassword, ...payload } = values;
       payload.status = UserStatus.INACTIVE;
 
@@ -69,10 +78,6 @@ export default function Register() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const goToLogin = () => {
-    router.push("/login");
   };
 
   return (
@@ -101,18 +106,23 @@ export default function Register() {
             name="name"
             rules={[{ required: true, message: "Por favor ingresa tu nombre" }]}
           >
-            <Input />
+            <Input size="large" />
           </Form.Item>
 
           <Form.Item
             label="Correo electrónico"
             name="email"
-            rules={[
-              { required: true, message: "Por favor ingresa tu email" },
-              { type: "email", message: "Email inválido" },
-            ]}
+            rules={[{ required: true, message: "Por favor ingresa tu email" }]}
           >
-            <Input />
+            <Input size="large" />
+          </Form.Item>
+
+          <Form.Item
+            label="Teléfono"
+            name="phone"
+            rules={[{ required: true, message: "Por favor ingresa tu teléfono" }]}
+          >
+            <Input size="large" />
           </Form.Item>
 
           <Form.Item
@@ -153,29 +163,13 @@ export default function Register() {
           </Form.Item>
 
           <Form.Item
-            label="Teléfono"
-            name="phone"
-            rules={[
-              { required: true, message: "Por favor ingresa tu teléfono" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
             label="Tipo de identificación"
             name="identificationType"
-            rules={[
-              { required: true, message: "Selecciona tipo de identificación" },
-            ]}
+            rules={[{ required: true, message: "Selecciona tipo de identificación" }]}
           >
             <Select>
-              <Select.Option value={IdentificationType.CEDULA}>
-                Cédula
-              </Select.Option>
-              <Select.Option value={IdentificationType.PASAPORTE}>
-                Pasaporte
-              </Select.Option>
+              <Select.Option value={IdentificationType.CEDULA}>Cédula</Select.Option>
+              <Select.Option value={IdentificationType.PASAPORTE}>Pasaporte</Select.Option>
               <Select.Option value={IdentificationType.RUC}>RUC</Select.Option>
             </Select>
           </Form.Item>
@@ -197,11 +191,7 @@ export default function Register() {
             <Input />
           </Form.Item>
 
-          <Form.Item
-            label="Rol"
-            name="role"
-            rules={[{ required: true, message: "Selecciona un rol" }]}
-          >
+          <Form.Item label="Rol" name="role" rules={[{ required: true }]}> 
             <Radio.Group>
               <Radio value={UserRole.PROPIETARIO}>Propietario</Radio>
               <Radio value={UserRole.GUARDIA}>Guardia</Radio>
@@ -210,42 +200,35 @@ export default function Register() {
 
           <Form.Item shouldUpdate={(prev, curr) => prev.role !== curr.role}>
             {({ getFieldValue }) =>
-              getFieldValue("role") !== UserRole.GUARDIA && (
-                <Form.Item
-                  label="Número de residentes"
-                  name="numberOfResidents"
-                  rules={[
-                    { required: true, message: "Ingresa número de residentes" },
-                    { type: "number", min: 1, message: "Debe ser al menos 1" },
-                  ]}
-                >
-                  <InputNumber min={1} />
-                </Form.Item>
+              getFieldValue("role") === UserRole.PROPIETARIO && (
+                <>
+                  <Form.Item
+                    label="Número de residentes"
+                    name="numberOfResidents"
+                    rules={[
+                      { required: true, message: "Ingresa número de residentes" },
+                      { type: "number", min: 1, message: "Debe ser al menos 1" },
+                    ]}
+                  >
+                    <InputNumber min={1} />
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Departamento"
+                    name="departamentoId"
+                    rules={[{ required: true, message: "Selecciona un departamento" }]}
+                  >
+                    <Select placeholder="Selecciona un departamento">
+                      {departamentosFiltrados.map((d) => (
+                        <Select.Option key={d._id} value={d._id}>
+                          {d.nombre}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </>
               )
             }
-          </Form.Item>
-
-          <Form.Item
-            label="Nombre de contacto de emergencia"
-            name="emergencyContactName"
-            rules={[
-              { required: true, message: "Ingresa nombre contacto emergencia" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Teléfono de contacto de emergencia"
-            name="emergencyContactPhone"
-            rules={[
-              {
-                required: true,
-                message: "Ingresa teléfono contacto emergencia",
-              },
-            ]}
-          >
-            <Input />
           </Form.Item>
 
           <Form.Item
@@ -253,7 +236,7 @@ export default function Register() {
             name="condominioId"
             rules={[{ required: true, message: "Selecciona un condominio" }]}
           >
-            <Select placeholder="Selecciona un condominio">
+            <Select size="large" placeholder="Selecciona un condominio">
               {condominios.map((c) => (
                 <Select.Option key={c._id} value={c._id}>
                   {c.name}
@@ -262,41 +245,77 @@ export default function Register() {
             </Select>
           </Form.Item>
 
-          <Form.Item label="Placa del vehículo (opcional)" name="vehiclePlate">
-            <Input />
-          </Form.Item>
-
-          <Form.Item label="Modelo del vehículo (opcional)" name="vehicleModel">
-            <Input />
-          </Form.Item>
-
-          <Form.Item label="Color del vehículo (opcional)" name="vehicleColor">
-            <Input />
-          </Form.Item>
-
-          <Form.Item shouldUpdate={(prev, curr) => prev.role !== curr.role}>
-            {({ getFieldValue }) =>
-              getFieldValue("role") === UserRole.PROPIETARIO && (
-                <Form.Item
-                  label="Departamento"
-                  name="departamentoId"
-                  rules={[
-                    { required: true, message: "Selecciona un departamento" },
-                  ]}
-                >
-                  <Select
-                    placeholder="Selecciona un departamento"
-                    disabled={departamentosFiltrados.length === 0}
+          <Form.List name="vehicles">
+            {(fields, { add, remove }) => (
+              <>
+                <label className="block font-semibold text-gray-700">
+                  Vehículos
+                </label>
+                {fields.map(({ key, name, ...restField }) => (
+                  <Space
+                    key={key}
+                    direction="vertical"
+                    style={{ display: "flex", marginBottom: 8 }}
                   >
-                    {departamentosFiltrados.map((d) => (
-                      <Select.Option key={d._id} value={d._id}>
-                        {d.codigo} - {d.nombre}
-                      </Select.Option>
-                    ))}
-                  </Select>
+                    <Form.Item
+                      {...restField}
+                      name={[name, "plate"]}
+                      rules={[{ required: true, message: "Ingresa la placa" }]}
+                    >
+                      <Input placeholder="Placa del vehículo" />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[name, "model"]}
+                      rules={[{ required: true, message: "Ingresa el modelo" }]}
+                    >
+                      <Input placeholder="Modelo del vehículo" />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[name, "color"]}
+                      rules={[{ required: true, message: "Ingresa el color" }]}
+                    >
+                      <Input placeholder="Color del vehículo" />
+                    </Form.Item>
+                    <Button
+                      type="dashed"
+                      danger
+                      onClick={() => remove(name)}
+                      icon={<MinusCircleOutlined />}
+                    >
+                      Eliminar vehículo
+                    </Button>
+                  </Space>
+                ))}
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
+                  >
+                    Agregar vehículo
+                  </Button>
                 </Form.Item>
-              )
-            }
+              </>
+            )}
+          </Form.List>
+
+          <Form.Item
+            label="Nombre de contacto de emergencia"
+            name="emergencyContactName"
+            rules={[{ required: true, message: "Ingresa nombre contacto emergencia" }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="Teléfono de contacto de emergencia"
+            name="emergencyContactPhone"
+            rules={[{ required: true, message: "Ingresa teléfono contacto emergencia" }]}
+          >
+            <Input />
           </Form.Item>
 
           <Form.Item
@@ -318,13 +337,6 @@ export default function Register() {
             </Button>
           </Form.Item>
         </Form>
-
-        <div className="text-center mt-4">
-          <span className="text-gray-600">¿Ya tienes una cuenta?</span>
-          <Button type="link" onClick={goToLogin}>
-            Inicia sesión
-          </Button>
-        </div>
       </div>
     </div>
   );

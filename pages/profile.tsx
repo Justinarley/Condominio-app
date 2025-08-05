@@ -33,7 +33,7 @@ export default function Profile() {
     try {
       await api.put(`/admin/${user.sub}`, values);
       message.success("Perfil actualizado");
-      localStorage.removeItem("access_token"); 
+      localStorage.removeItem("access_token");
       router.push("/login");
     } catch (err) {
       message.error("Error al actualizar perfil");
@@ -69,11 +69,7 @@ export default function Profile() {
               Editar datos
             </h2>
 
-            <Form
-              layout="vertical"
-              form={form}
-              onFinish={onFinish}
-            >
+            <Form layout="vertical" form={form} onFinish={onFinish}>
               <Form.Item name="email" label="Correo">
                 <Input placeholder="Tu correo electrónico" />
               </Form.Item>

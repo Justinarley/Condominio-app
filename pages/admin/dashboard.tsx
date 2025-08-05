@@ -3,8 +3,6 @@ import api from "@/libs/axios";
 import {
   Card,
   Statistic,
-  Row,
-  Col,
   Table,
   Tag,
   Tooltip,
@@ -127,62 +125,59 @@ export default function AdminDashboard() {
   };
 
   return (
-    <>
-      <h1 className="text-2xl font-bold mb-6 text-black">Dashboard - Admin</h1>
+    <div className="p-6">
+      <h1 className="text-3xl font-bold text-gray-800 mb-8">Dashboard - Admin</h1>
 
-      <Row gutter={16} className="mb-8">
-        {condominios.slice(-3).map((condominio) => (
-          <Col key={condominio._id} xs={24} md={8}>
+      {/* Layout de tarjetas */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        {/* Tarjeta grande de Condominio */}
+        <div className="md:col-span-2">
+          {condominios.slice(-1).map((condominio) => (
             <Card
+              key={condominio._id}
+              className="rounded-xl shadow-md h-full"
               title={
-                <>
-                  <div>{condominio.name}</div>
-                  <div style={{ fontSize: 12, color: "#888" }}>
-                    ID: {condominio.id}
-                  </div>
-                </>
+                <div>
+                  <div className="text-lg font-semibold">{condominio.name}</div>
+                  <div className="text-xs text-gray-500">ID: {condominio.id}</div>
+                </div>
               }
             >
-              <Statistic
-                title="Departamentos"
-                value={condominio.totalDepartamentos}
-              />
-              <Statistic
-                title="Propietarios Activos"
-                value={condominio.usuariosActivos}
-                valueStyle={{ color: "green" }}
-              />
-              <Statistic
-                title="Propietarios Inactivos"
-                value={condominio.usuariosInactivos}
-                valueStyle={{ color: "red" }}
-              />
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <Statistic title="Departamentos" value={condominio.totalDepartamentos} />
+                <Statistic
+                  title="Propietarios Activos"
+                  value={condominio.usuariosActivos}
+                  valueStyle={{ color: "#16a34a" }}
+                />
+                <Statistic
+                  title="Propietarios Inactivos"
+                  value={condominio.usuariosInactivos}
+                  valueStyle={{ color: "#dc2626" }}
+                />
+              </div>
             </Card>
-          </Col>
-        ))}
-      </Row>
+          ))}
+        </div>
 
-      {/* Conteo de guardias */}
-      <Row gutter={16} style={{ marginBottom: 24 }}>
-        <Col xs={12} sm={6}>
-          <Card>
+        {/* Columna de Guardias (vertical stack) */}
+        <div className="flex flex-col gap-6 h-full">
+          <Card className="rounded-xl shadow-md flex-1">
             <Statistic
               title="Guardias Activos"
               value={guardiasCount.activos}
-              valueStyle={{ color: "green" }}
+              valueStyle={{ color: "#16a34a" }}
             />
           </Card>
-        </Col>
-        <Col xs={12} sm={6}>
-          <Card>
+          <Card className="rounded-xl shadow-md flex-1">
             <Statistic
               title="Guardias Inactivos"
               value={guardiasCount.inactivos}
-              valueStyle={{ color: "red" }}
+              valueStyle={{ color: "#dc2626" }}
             />
           </Card>
-        </Col>
-      </Row>
+        </div>
+      </div>
 
       {/* Filtro por condominio para usuarios pendientes */}
       <div style={{ marginBottom: 16 }}>
@@ -236,7 +231,7 @@ export default function AdminDashboard() {
               render: (_: unknown, record: Usuario) => (
                 <Tooltip title="Aprobar usuario">
                   <CheckOutlined
-                    style={{ color: "green", cursor: "pointer", fontSize: 18 }}
+                    className="text-green-600 hover:text-green-800 cursor-pointer text-xl"
                     onClick={() => aprobarUsuario(record._id)}
                   />
                 </Tooltip>
@@ -245,6 +240,6 @@ export default function AdminDashboard() {
           ]}
         />
       </Card>
-    </>
+    </div>
   );
 }
