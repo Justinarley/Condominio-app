@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import api from "@/libs/axios";
 import { Form, Input, Button, message, Card } from "antd";
 import { Mail, Lock } from "lucide-react";
@@ -42,6 +43,7 @@ export default function LoginPage() {
         default:
           router.push("/dashboard");
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       const msg =
         error?.response?.data?.message ||
@@ -135,3 +137,4 @@ export default function LoginPage() {
     </div>
   );
 }
+
