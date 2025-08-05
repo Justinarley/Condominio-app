@@ -134,8 +134,8 @@ export default function AdminsIndex() {
   ];
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">Administradores</h1>
+     <div className="pt-14 p-6 bg-gray-50 min-h-[calc(100vh-56px)]">
+      <h1 className="text-2xl font-bold mb-6 mt-4 text-gray-800">Administradores</h1>
 
       <div className="mb-4 flex justify-end gap-2">
         <Link href="/superadmin/admins/insert">
@@ -148,7 +148,6 @@ export default function AdminsIndex() {
           endpoint="/reportes/admins/excel"
         />
       </div>
-
       <Card className="shadow-sm border border-gray-200 rounded-md">
         <Table
           columns={columns}

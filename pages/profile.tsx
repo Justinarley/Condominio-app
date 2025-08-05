@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import api from "@/libs/axios";
-import { Form, Input, Button, message, Card, Divider } from "antd";
+import { Form, Input, Button, message, Card } from "antd";
 import { useRouter } from "next/router";
 
 export default function Profile() {
   const user = useCurrentUser();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [editing, setEditing] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -26,7 +27,6 @@ export default function Profile() {
     }
   }, [user, form]);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onFinish = async (values: any) => {
     if (!user) return;
     setLoading(true);
@@ -45,30 +45,59 @@ export default function Profile() {
   if (!user) return <p className="text-center py-20">Cargando usuario...</p>;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <Card
-        className="w-full max-w-xl shadow-md"
-        title={<h1 className="text-xl font-semibold text-gray-800">Perfil</h1>}
-      >
-        <div className="mb-6 space-y-1 text-sm text-gray-700">
-          <p>
-            <strong className="mr-2 text-gray-600">Nombre:</strong> {user.name}
-          </p>
-          <p>
-            <strong className="mr-2 text-gray-600">Correo:</strong> {user.email}
-          </p>
-          <p>
-            <strong className="mr-2 text-gray-600">Rol:</strong> {user.role}
-          </p>
-        </div>
+    <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">
+      {!editing ? (
+        <Card className="w-full max-w-md shadow-lg">
+          <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">Mi Perfil</h1>
+          <div className="space-y-2 text-gray-700 text-center">
+            <p>
+              <strong>Nombre:</strong> {user.name}
+            </p>
+            <p>
+              <strong>Correo:</strong> {user.email}
+            </p>
+            <p>
+              <strong>Rol:</strong> {user.role}
+            </p>
+          </div>
+          {user.role === "admin" && (
+            <Button
+              className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white"
+              onClick={() => setEditing(true)}
+            >
+              Editar Perfil
+            </Button>
+          )}
+        </Card>
+      ) : (
+        <div className="w-full flex flex-col md:flex-row gap-6">
+          {/* Panel de Perfil a la izquierda */}
+          <Card className="w-full md:w-1/2 shadow-md">
+            <h1 className="text-2xl font-bold text-gray-800 mb-4">Mi Perfil</h1>
+            <div className="space-y-2 text-gray-700">
+              <p>
+                <strong>Nombre:</strong> {user.name}
+              </p>
+              <p>
+                <strong>Correo:</strong> {user.email}
+              </p>
+              <p>
+                <strong>Rol:</strong> {user.role}
+              </p>
+            </div>
+            <Button
+              className="mt-6 bg-gray-500 hover:bg-gray-600 text-white"
+              onClick={() => setEditing(false)}
+            >
+              Cancelar
+            </Button>
+          </Card>
 
-        {user.role === "admin" && (
-          <>
-            <Divider className="mb-4" />
-            <h2 className="text-base font-semibold mb-2 text-gray-800">
-              Editar datos
+          {/* Formulario de Edición a la derecha */}
+          <Card className="w-full md:w-1/2 shadow-md">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              Editar Datos
             </h2>
-
             <Form layout="vertical" form={form} onFinish={onFinish}>
               <Form.Item name="email" label="Correo">
                 <Input placeholder="Tu correo electrónico" />
@@ -91,9 +120,9 @@ export default function Profile() {
                 </Button>
               </Form.Item>
             </Form>
-          </>
-        )}
-      </Card>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

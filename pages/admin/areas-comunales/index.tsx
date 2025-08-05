@@ -91,7 +91,6 @@ export default function SolicitudesReserva() {
       );
       message.success("Solicitud aprobada");
       fetchSolicitudes(selectedCondominio);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       const msg = err?.response?.data?.message || "Error al aprobar solicitud";
       message.error(msg);
@@ -214,8 +213,9 @@ export default function SolicitudesReserva() {
   ];
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">Áreas Comunales</h1>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      {/* Separación para que no quede debajo del navbar */}
+      <h1 className="text-2xl font-bold mb-6 text-gray-800 mt-16">Áreas Comunales</h1>
 
       {/* Filtro por condominio */}
       <div className="mb-4">
@@ -234,7 +234,7 @@ export default function SolicitudesReserva() {
         </Select>
       </div>
 
-      {/* Carrusel de tarjetas */}
+      {/* Carrusel de tarjetas blancas con sombra */}
       <div className="mb-6 overflow-x-auto whitespace-nowrap flex gap-4">
         {condominios.map((condo) => (
           <Card
@@ -242,23 +242,25 @@ export default function SolicitudesReserva() {
             title={
               <div>
                 <p className="font-bold">{condo.name}</p>
-                <p className="text-xs text-gray-500">ID: {condo.id}</p>
+                <p className="text-xs text-gray-600">ID: {condo.id}</p>
               </div>
             }
-            className="min-w-[300px] border border-gray-200"
+            className="min-w-[300px] rounded-lg shadow-md bg-white"
+            headStyle={{ backgroundColor: "white" }}
+            bodyStyle={{ padding: "12px" }}
           >
             {(condo.areasComunes ?? []).length > 0 ? (
               (condo.areasComunes ?? []).map((area, index) => (
                 <div key={index} className="mb-2">
                   <p className="text-sm font-semibold">{area.nombre}</p>
-                  <p className="text-xs text-gray-600">{area.estado}</p>
-                  <p className="text-xs text-gray-600">
+                  <p className="text-xs text-gray-700">{area.estado}</p>
+                  <p className="text-xs text-gray-700">
                     Capacidad: {area.capacidad || "N/A"}
                   </p>
-                  <p className="text-xs text-gray-600">
+                  <p className="text-xs text-gray-700">
                     {area.descripcion || "Sin descripción"}
                   </p>
-                  <hr className="my-1" />
+                  <hr className="my-1 border-gray-300" />
                 </div>
               ))
             ) : (
@@ -278,7 +280,7 @@ export default function SolicitudesReserva() {
         />
       </div>
 
-      {/* Tabla de solicitudes */}
+      {/* Tabla de solicitudes con fondo celeste claro */}
       <Card className="shadow-sm border border-gray-200 rounded-md">
         <Table
           dataSource={solicitudes}
@@ -286,6 +288,7 @@ export default function SolicitudesReserva() {
           rowKey="solicitudId"
           loading={loading}
           pagination={{ pageSize: 10 }}
+          className="bg-[#e6f0ff] rounded-md"
         />
       </Card>
 

@@ -104,9 +104,7 @@ export default function CondominiosAdminIndex() {
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
-      <Title level={2} className="mb-6 text-gray-800">
-        Condominios del Admin
-      </Title>
+      <h1 className="text-2xl font-bold mb-6 text-gray-800 mt-16">Condominios del Admin</h1>
 
       <div className="mb-6">
         <CondominioSelect

@@ -41,6 +41,7 @@ export default function Register() {
     Condominio["departamentos"]
   >([]);
   const [loading, setLoading] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
 
   const [form] = Form.useForm();
 
@@ -57,7 +58,6 @@ export default function Register() {
     form.setFieldsValue({ departamentoId: undefined });
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
@@ -80,27 +80,11 @@ export default function Register() {
     }
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="bg-white w-full max-w-3xl rounded-xl shadow-md p-6">
-        <h2 className="text-2xl font-bold text-center mb-6">
-          Registro de usuario
-        </h2>
-
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={onFinish}
-          initialValues={{
-            role: UserRole.PROPIETARIO,
-            identificationType: IdentificationType.CEDULA,
-          }}
-          onValuesChange={(changedValues) => {
-            if (changedValues.condominioId) {
-              onCondominioChange(changedValues.condominioId);
-            }
-          }}
-        >
+  const steps = [
+    {
+      title: "Información Personal",
+      content: (
+        <>
           <Form.Item
             label="Nombre completo"
             name="name"
@@ -130,10 +114,7 @@ export default function Register() {
             name="password"
             rules={[
               { required: true, message: "Por favor ingresa una contraseña" },
-              {
-                min: 6,
-                message: "La contraseña debe tener mínimo 6 caracteres",
-              },
+              { min: 6, message: "La contraseña debe tener mínimo 6 caracteres" },
             ]}
             hasFeedback
           >
@@ -161,7 +142,13 @@ export default function Register() {
           >
             <Input.Password />
           </Form.Item>
-
+        </>
+      ),
+    },
+    {
+      title: "Datos de Identificación y Condominio",
+      content: (
+        <>
           <Form.Item
             label="Tipo de identificación"
             name="identificationType"
@@ -178,20 +165,14 @@ export default function Register() {
             label="Número de identificación"
             name="identificationNumber"
             rules={[
-              {
-                required: true,
-                message: "Por favor ingresa número de identificación",
-              },
-              {
-                pattern: /^\d{8,13}$/,
-                message: "Número inválido (8 a 13 dígitos)",
-              },
+              { required: true, message: "Por favor ingresa número de identificación" },
+              { pattern: /^\d{8,13}$/, message: "Número inválido (8 a 13 dígitos)" },
             ]}
           >
             <Input />
           </Form.Item>
 
-          <Form.Item label="Rol" name="role" rules={[{ required: true }]}> 
+          <Form.Item label="Rol" name="role" rules={[{ required: true }]}>
             <Radio.Group>
               <Radio value={UserRole.PROPIETARIO}>Propietario</Radio>
               <Radio value={UserRole.GUARDIA}>Guardia</Radio>
@@ -244,19 +225,19 @@ export default function Register() {
               ))}
             </Select>
           </Form.Item>
-
+        </>
+      ),
+    },
+    {
+      title: "Datos Adicionales",
+      content: (
+        <>
           <Form.List name="vehicles">
             {(fields, { add, remove }) => (
               <>
-                <label className="block font-semibold text-gray-700">
-                  Vehículos
-                </label>
+                <label className="block font-semibold text-gray-700">Vehículos</label>
                 {fields.map(({ key, name, ...restField }) => (
-                  <Space
-                    key={key}
-                    direction="vertical"
-                    style={{ display: "flex", marginBottom: 8 }}
-                  >
+                  <Space key={key} direction="vertical" style={{ display: "flex", marginBottom: 8 }}>
                     <Form.Item
                       {...restField}
                       name={[name, "plate"]}
@@ -325,18 +306,82 @@ export default function Register() {
           >
             <Input.TextArea rows={3} />
           </Form.Item>
+        </>
+      ),
+    },
+  ];
 
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              className="w-full"
-            >
-              Registrar
-            </Button>
-          </Form.Item>
-        </Form>
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[#a0d8ef] p-4">
+      <div className="bg-white w-full max-w-5xl rounded-2xl shadow-lg grid grid-cols-1 md:grid-cols-2 overflow-hidden">
+        
+        {/* Panel Izquierdo */}
+        <div className="hidden md:flex flex-col items-center justify-center bg-white p-8">
+          <h2 className="text-3xl font-bold text-gray-800 mb-4">¡Bienvenido!</h2>
+          <p className="text-gray-600 text-center mb-6">
+            Empieza creando tu cuenta aquí. Completa los pasos para registrar tu usuario.
+          </p>
+
+          <p className="text-sm text-gray-500">
+            ¿Ya tienes una cuenta?{" "}
+            <a href="/login" className="text-blue-600 hover:underline">
+              Inicia sesión
+            </a>
+          </p>
+        </div>
+
+        {/* Panel Derecho */}
+        <div className="bg-gray-50 p-6 flex flex-col">
+          <h3 className="text-xl font-semibold mb-2">
+            Paso {currentStep + 1} de {steps.length}
+          </h3>
+          <h4 className="text-lg font-medium text-gray-700 mb-4">
+            {steps[currentStep].title}
+          </h4>
+
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={onFinish}
+            onValuesChange={(changedValues) => {
+              if (changedValues.condominioId) {
+                onCondominioChange(changedValues.condominioId);
+              }
+            }}
+            className="flex flex-col flex-grow justify-between"
+          >
+            <div className="flex-grow overflow-y-auto">
+              {steps.map((step, index) => (
+                <div key={index} style={{ display: index === currentStep ? 'block' : 'none' }}>
+                  {step.content}
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 flex justify-between">
+              {currentStep > 0 && (
+                <Button onClick={() => setCurrentStep(currentStep - 1)}>
+                  Anterior
+                </Button>
+              )}
+
+              {currentStep < steps.length - 1 ? (
+                <Button type="primary" onClick={() => setCurrentStep(currentStep + 1)}>
+                  Siguiente
+                </Button>
+              ) : (
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={loading}
+                  className="w-full"
+                >
+                  Crear Cuenta
+                </Button>
+              )}
+            </div>
+          </Form>
+        </div>
       </div>
     </div>
   );
