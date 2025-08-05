@@ -46,8 +46,11 @@ export default function SuperAdminDashboard() {
 
     fetchData();
   }, []);
+
   const cantidadTorres = condominios.filter((c) => c.tipo === "torres").length;
   const cantidadCasas = condominios.filter((c) => c.tipo === "casas").length;
+  const condominiosActivos = condominios.filter((c) => c.status === "active").length;
+  const condominiosInactivos = condominios.length - condominiosActivos;
 
   const StatCard = ({
     icon,
@@ -66,7 +69,7 @@ export default function SuperAdminDashboard() {
   }) => (
     <div
       onClick={onClick}
-      className={`w-full bg-white rounded-xl p-5 shadow-md hover:shadow-lg transition duration-200 ${
+      className={`w-full h-full flex flex-col justify-between bg-white rounded-xl p-5 shadow-md hover:shadow-lg transition duration-200 ${
         onClick ? "cursor-pointer hover:bg-gray-100" : ""
       }`}
       role={onClick ? "button" : undefined}
@@ -93,7 +96,8 @@ export default function SuperAdminDashboard() {
       </Title>
 
       <Row gutter={[20, 20]} className="mb-12">
-        <Col xs={24} sm={12} md={5}>
+        {/* ADMINISTRADORES */}
+        <Col xs={24} sm={12} md={6} className="min-h-[160px]">
           <StatCard
             icon={<UserOutlined />}
             title="Administradores"
@@ -105,28 +109,20 @@ export default function SuperAdminDashboard() {
           />
         </Col>
 
-        <Col xs={24} sm={12} md={5}>
+        {/* CONDOMINIOS GENERAL */}
+        <Col xs={24} sm={12} md={6} className="min-h-[160px]">
           <StatCard
             icon={<Building2 />}
-            title="Condominios"
+            title="Total Condominios"
             value={condominios.length}
-            extra="Actualización pendiente"
+            extra={`Activos: ${condominiosActivos} / Inactivos: ${condominiosInactivos}`}
             iconColor="bg-green-100 text-green-500"
             onClick={() => router.push("/superadmin/condominios")}
           />
         </Col>
 
-        <Col xs={24} sm={12} md={5}>
-          <StatCard
-            icon={<CheckCircleOutlined />}
-            title="Condominios Activos"
-            value={condominios.filter((c) => c.status === "active").length}
-            extra="Actualización pendiente"
-            iconColor="bg-yellow-100 text-yellow-500"
-          />
-        </Col>
-
-        <Col xs={24} sm={12} md={4}>
+        {/* Torres */}
+        <Col xs={24} sm={12} md={6} className="min-h-[160px]">
           <StatCard
             icon={<Building2 />}
             title="Tipo Torres"
@@ -136,7 +132,8 @@ export default function SuperAdminDashboard() {
           />
         </Col>
 
-        <Col xs={24} sm={12} md={4}>
+        {/* Casa */}
+        <Col xs={24} sm={12} md={6} className="min-h-[160px]">
           <StatCard
             icon={<Home />}
             title="Tipo Casas"

@@ -77,11 +77,11 @@ export const ModalReporte: FC<ModalReporteProps> = ({
 
   return (
     <Modal
-      title="Generar reporte"
+      title={<span className="text-xl font-semibold text-gray-800">Generar reporte</span>}
       open={open}
       onCancel={onClose}
       footer={[
-        <Button key="cancelar" onClick={onClose}>
+        <Button key="cancelar" onClick={onClose} className="rounded-lg">
           Cancelar
         </Button>,
         <Button
@@ -89,32 +89,37 @@ export const ModalReporte: FC<ModalReporteProps> = ({
           type="primary"
           loading={loading}
           onClick={descargarReporte}
+          className="bg-blue-600 hover:bg-blue-700 rounded-lg"
         >
           Generar
         </Button>,
       ]}
+      className="rounded-xl"
     >
-      {!esDetallado && (
-        <Form layout="vertical">
-          <Form.Item label="Rango de fechas">
-            <RangePicker
-              value={rangoFechas}
-              onChange={(values) => {
-                if (values) {
-                  setRangoFechas(values as [dayjs.Dayjs, dayjs.Dayjs]);
-                }
-              }}
-              allowClear={false}
-            />
-          </Form.Item>
-        </Form>
-      )}
-      {esDetallado && (
-        <p>
-          Se generará un reporte detallado para el condominio:{" "}
-          <b>{name ?? id}</b>
-        </p>
-      )}
+      <div className="flex flex-col gap-6">
+        {!esDetallado && (
+          <Form layout="vertical" className="space-y-4">
+            <Form.Item label={<span className="font-medium text-gray-700">Rango de fechas</span>}>
+              <RangePicker
+                value={rangoFechas}
+                onChange={(values) => {
+                  if (values) {
+                    setRangoFechas(values as [dayjs.Dayjs, dayjs.Dayjs]);
+                  }
+                }}
+                allowClear={false}
+                className="w-full"
+              />
+            </Form.Item>
+          </Form>
+        )}
+        {esDetallado && (
+          <p className="text-gray-600 text-base">
+            Se generará un reporte detallado para el condominio:{" "}
+            <b className="text-gray-800">{name ?? id}</b>
+          </p>
+        )}
+      </div>
     </Modal>
   );
 };
