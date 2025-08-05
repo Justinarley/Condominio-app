@@ -2,41 +2,39 @@ import { useEffect, useState } from "react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import api from "@/libs/axios";
 import { Form, Input, Button, message, Card, Divider } from "antd";
+import { useRouter } from "next/router";
 
 export default function Profile() {
   const user = useCurrentUser();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-
-  const [initialValues, setInitialValues] = useState({
-    email: "",
-    phone: "",
-    address: "",
-  });
+  const router = useRouter();
 
   useEffect(() => {
     if (!user) return;
     if (user.role === "admin") {
       api
-        .get(`/admins/${user.sub}`)
+        .get(`/admin/${user.sub}`)
         .then((res) => {
-          setInitialValues({
+          form.setFieldsValue({
             email: res.data.email,
             phone: res.data.phone,
             address: res.data.address,
           });
-          form.setFieldsValue(res.data);
         })
         .catch(() => message.error("Error al cargar perfil"));
     }
-  }, [user]);
+  }, [user, form]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onFinish = async (values: any) => {
     if (!user) return;
     setLoading(true);
     try {
-      await api.put(`/admins/${user.sub}`, values);
+      await api.put(`/admin/${user.sub}`, values);
       message.success("Perfil actualizado");
+      localStorage.removeItem("access_token"); 
+      router.push("/login");
     } catch (err) {
       message.error("Error al actualizar perfil");
     } finally {
@@ -74,7 +72,6 @@ export default function Profile() {
             <Form
               layout="vertical"
               form={form}
-              initialValues={initialValues}
               onFinish={onFinish}
             >
               <Form.Item name="email" label="Correo">

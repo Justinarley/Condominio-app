@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
 import api from "@/libs/axios";
-import { Card, Statistic, Row, Col, Table, Tag, Tooltip } from "antd";
+import {
+  Card,
+  Statistic,
+  Row,
+  Col,
+  Table,
+  Tag,
+  Tooltip,
+  Select,
+  message,
+} from "antd";
 import { CheckOutlined } from "@ant-design/icons";
 
 type Condominio = {
@@ -29,6 +39,9 @@ type Usuario = {
 export default function AdminDashboard() {
   const [condominios, setCondominios] = useState<Condominio[]>([]);
   const [usuariosPendientes, setUsuariosPendientes] = useState<Usuario[]>([]);
+  const [selectedCondominio, setSelectedCondominio] = useState<string | null>(
+    null
+  );
   const [guardiasCount, setGuardiasCount] = useState<{
     activos: number;
     inactivos: number;
@@ -38,26 +51,76 @@ export default function AdminDashboard() {
   });
   const [loading, setLoading] = useState(false);
 
+  // Función para cargar condominios y conteos iniciales
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
+      try {
+        const [resCondominios, resUsuarios, resGuardias] = await Promise.all([
+          api.get("/admin/condominios"),
+          api.get("/admin/usuarios-pendientes"),
+          api.get("/admin/guardias-count"),
+        ]);
+        setCondominios(resCondominios.data);
+        setUsuariosPendientes(resUsuarios.data);
+        setGuardiasCount(resGuardias.data);
+      } catch {
+        // Manejar error
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // Cuando cambia el filtro por condominio, recarga usuarios pendientes con filtro
+  const fetchUsuariosPendientes = async (condominioId?: string | null) => {
+    setLoading(true);
+    try {
+      let url = "/admin/usuarios-pendientes";
+      if (condominioId) {
+        url += `?condominioId=${condominioId}`;
+      }
+      const res = await api.get(url);
+      setUsuariosPendientes(res.data);
+    } catch {
+      message.error("Error al cargar usuarios pendientes");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onCondominioChange = (value: string) => {
+    setSelectedCondominio(value || null);
+    fetchUsuariosPendientes(value || null);
+  };
+
+  const refrescarDashboardData = async () => {
+    setLoading(true);
+    try {
       const [resCondominios, resUsuarios, resGuardias] = await Promise.all([
         api.get("/admin/condominios"),
-        api.get("/admin/usuarios-pendientes"),
+        api.get(
+          "/admin/usuarios-pendientes" +
+            (selectedCondominio ? `?condominioId=${selectedCondominio}` : "")
+        ),
         api.get("/admin/guardias-count"),
       ]);
       setCondominios(resCondominios.data);
       setUsuariosPendientes(resUsuarios.data);
       setGuardiasCount(resGuardias.data);
+    } catch (error) {
+      message.error("Error actualizando el dashboard");
+    } finally {
       setLoading(false);
-    };
-    fetchData();
-  }, []);
+    }
+  };
 
   const aprobarUsuario = async (userId: string) => {
     try {
       await api.put(`/admin/usuarios/${userId}/aprobar`, { aprobar: true });
-      setUsuariosPendientes((prev) => prev.filter((u) => u._id !== userId));
+      message.success("Usuario aprobado correctamente");
+      await refrescarDashboardData();
     } catch (error) {
       console.error("Error aprobando usuario", error);
     }
@@ -99,7 +162,7 @@ export default function AdminDashboard() {
         ))}
       </Row>
 
-      {/* NUEVO: Conteo de guardias */}
+      {/* Conteo de guardias */}
       <Row gutter={16} style={{ marginBottom: 24 }}>
         <Col xs={12} sm={6}>
           <Card>
@@ -120,6 +183,23 @@ export default function AdminDashboard() {
           </Card>
         </Col>
       </Row>
+
+      {/* Filtro por condominio para usuarios pendientes */}
+      <div style={{ marginBottom: 16 }}>
+        <Select
+          placeholder="Filtrar usuarios pendientes por condominio"
+          allowClear
+          style={{ width: 300 }}
+          onChange={onCondominioChange}
+          value={selectedCondominio || undefined}
+        >
+          {condominios.map((c) => (
+            <Select.Option key={c._id} value={c._id}>
+              {c.name}
+            </Select.Option>
+          ))}
+        </Select>
+      </div>
 
       {/* Tabla usuarios pendientes */}
       <Card title="Usuarios Inactivos Pendientes" loading={loading}>

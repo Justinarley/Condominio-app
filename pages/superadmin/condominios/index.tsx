@@ -1,13 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Table,
-  Button,
-  Space,
-  Tag,
-  message,
-  Popconfirm,
-  Card,
-} from "antd";
+import { Table, Button, Space, Tag, message, Popconfirm, Card } from "antd";
 import {
   EditOutlined,
   CheckOutlined,
@@ -17,6 +9,7 @@ import {
 import Link from "next/link";
 import api from "@/libs/axios";
 import { ModalReporte } from "@/pages/components/Reportes";
+import { CondominioSelect } from "@/pages/components/Filtro-condominios";
 
 type Condominio = {
   _id: string;
@@ -40,13 +33,22 @@ export default function CondominiosIndex() {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
-  const [selectedName, setSelectedName] = useState<string | undefined>(undefined);
+  const [selectedName, setSelectedName] = useState<string | undefined>(
+    undefined
+  );
   const [esDetallado, setEsDetallado] = useState(false);
+  const [selectedCondominioId, setSelectedCondominioId] = useState<
+    string | null
+  >(null);
 
-  const fetchCondominios = async () => {
+  const fetchCondominios = async (condominioId?: string | null) => {
     setLoading(true);
     try {
-      const res = await api.get("/condominios");
+      let url = "/condominios";
+      if (condominioId) {
+        url += `?condominioId=${condominioId}`;
+      }
+      const res = await api.get(url);
       setCondominios(res.data);
     } catch {
       message.error("Error al cargar condominios");
@@ -56,8 +58,8 @@ export default function CondominiosIndex() {
   };
 
   useEffect(() => {
-    fetchCondominios();
-  }, []);
+    fetchCondominios(selectedCondominioId);
+  }, [selectedCondominioId]);
 
   const toggleStatus = async (condominio: Condominio) => {
     const newStatus = condominio.status === "active" ? "inactive" : "active";
@@ -103,7 +105,9 @@ export default function CondominiosIndex() {
           <div className="text-sm font-medium text-gray-800">
             {condominio.adminId?.name}
           </div>
-          <div className="text-xs text-gray-500">{condominio.adminId?.email}</div>
+          <div className="text-xs text-gray-500">
+            {condominio.adminId?.email}
+          </div>
         </div>
       ),
     },
@@ -163,20 +167,27 @@ export default function CondominiosIndex() {
     <div className="p-6 bg-gray-50 min-h-screen">
       <h1 className="text-2xl font-bold mb-6 text-gray-800">Condominios</h1>
 
-      <div className="mb-4 flex justify-end gap-2">
-        <Link href="/superadmin/condominios/insert">
-          <Button type="primary">Insertar</Button>
-        </Link>
-        <Button
-          onClick={() => {
-            setSelectedId(undefined);
-            setSelectedName(undefined);
-            setEsDetallado(false);
-            setVisible(true);
-          }}
-        >
-          Reporte
-        </Button>
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <CondominioSelect
+          value={selectedCondominioId}
+          onChange={(val) => setSelectedCondominioId(val)}
+          superAdmin={true}
+        />
+        <div className="flex gap-2">
+          <Link href="/superadmin/condominios/insert">
+            <Button type="primary">Insertar</Button>
+          </Link>
+          <Button
+            onClick={() => {
+              setSelectedId(undefined);
+              setSelectedName(undefined);
+              setEsDetallado(false);
+              setVisible(true);
+            }}
+          >
+            Reporte
+          </Button>
+        </div>
       </div>
 
       <Card className="shadow-sm border border-gray-200 rounded-md">

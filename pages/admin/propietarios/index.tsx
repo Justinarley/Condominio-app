@@ -7,6 +7,7 @@ import {
   message,
   Popconfirm,
   Card,
+  Select,
 } from "antd";
 import {
   CheckOutlined,
@@ -23,8 +24,15 @@ type Propietario = {
   email: string;
   phone: string;
   address: string;
-  identification: string;
+  identificationNumber: string;
   status: "active" | "inactive";
+  condominioNombre?: string;
+  departamentoCodigo?: string;
+};
+
+type Condominio = {
+  _id: string;
+  name: string;
 };
 
 export default function PropietariosIndex() {
@@ -34,10 +42,27 @@ export default function PropietariosIndex() {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
 
-  const fetchUsuarios = async () => {
+  // Estado para la lista de condominios y condominio seleccionado
+  const [condominios, setCondominios] = useState<Condominio[]>([]);
+  const [condominioSeleccionado, setCondominioSeleccionado] = useState<string | null>(null);
+
+  // Obtener condominios del admin para el select
+  const fetchCondominios = async () => {
+    try {
+      const res = await api.get("/admin/condominios");
+      setCondominios(res.data);
+    } catch {
+      message.error("Error al cargar condominios");
+    }
+  };
+
+  // Obtener usuarios, con filtro opcional de condominio
+  const fetchUsuarios = async (condominioId?: string | null) => {
     setLoading(true);
     try {
-      const res = await api.get("/admin/propietarios-activos");
+      let url = "/admin/propietarios-activos";
+      if (condominioId) url += `?condominioId=${condominioId}`;
+      const res = await api.get(url);
       setUsuarios(res.data);
     } catch {
       message.error("Error al cargar propietarios");
@@ -47,8 +72,12 @@ export default function PropietariosIndex() {
   };
 
   useEffect(() => {
-    fetchUsuarios();
+    fetchCondominios();
   }, []);
+
+  useEffect(() => {
+    fetchUsuarios(condominioSeleccionado);
+  }, [condominioSeleccionado]);
 
   const toggleStatus = async (user: Propietario) => {
     const newStatus = user.status === "active" ? "inactive" : "active";
@@ -57,7 +86,7 @@ export default function PropietariosIndex() {
       message.success(
         `Usuario ${newStatus === "active" ? "activado" : "desactivado"}`
       );
-      fetchUsuarios();
+      fetchUsuarios(condominioSeleccionado);
     } catch {
       message.error("Error al actualizar estado");
     }
@@ -76,8 +105,8 @@ export default function PropietariosIndex() {
   const columns = [
     {
       title: "Identificación",
-      dataIndex: "identification",
-      key: "identification",
+      dataIndex: "identificationNumber",
+      key: "identificationNumber",
     },
     { title: "Nombre", dataIndex: "name", key: "name" },
     { title: "Email", dataIndex: "email", key: "email" },
@@ -137,6 +166,17 @@ export default function PropietariosIndex() {
     <div className="p-6 bg-gray-50 min-h-screen">
       <h1 className="text-2xl font-bold mb-6 text-gray-800">Propietarios</h1>
 
+      {/* Select para filtrar por condominio */}
+      <div className="mb-4 w-64">
+        <Select
+          allowClear
+          placeholder="Filtrar por condominio"
+          value={condominioSeleccionado}
+          onChange={(value) => setCondominioSeleccionado(value)}
+          options={condominios.map((c) => ({ label: c.name, value: c._id }))}
+        />
+      </div>
+
       <div className="mb-4 flex justify-end gap-2">
         <Button onClick={() => setVisible(true)}>Reporte</Button>
         <ModalReporte
@@ -158,7 +198,7 @@ export default function PropietariosIndex() {
           }
         />
       </Card>
-      
+
       <ResetPasswordModal
         open={isPasswordModalOpen}
         onClose={closePasswordModal}

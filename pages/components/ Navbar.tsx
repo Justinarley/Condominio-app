@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   LogOut,
   Shield,
+  Building,
 } from "lucide-react";
 import { Dropdown } from "antd";
 import { useRouter } from "next/router";
@@ -61,7 +62,6 @@ export default function Navbar() {
 
   return (
     <nav className="bg-sky-600 px-4 py-2 flex items-center justify-between shadow-sm">
-
       <div className="flex items-center gap-6">
         <div className="flex gap-2 items-center cursor-pointer">
           <Building2 size={24} className="text-white" />
@@ -109,8 +109,27 @@ export default function Navbar() {
               />
               <NavItem
                 icon={<Home size={18} className="text-white" />}
-                label="Mi Condominio"
-                path="/admin"
+                label="Mis Condominios"
+                path="/admin/condominios"
+              />
+              <NavItem
+                icon={<Building size={18} className="text-white" />}
+                label="Areas Comunales"
+                path="/admin/areas-comunales"
+              />
+            </>
+          )}
+          {user?.role === "propietario" && (
+            <>
+              <NavItem
+                icon={<LayoutDashboard size={18} className="text-white" />}
+                label="Dashboard"
+                path="/propietario/dashboard"
+              />
+              <NavItem
+                icon={<Building size={18} className="text-white" />}
+                label="Area comunal"
+                path="/propietario/area-comunal"
               />
             </>
           )}
