@@ -294,7 +294,7 @@ const CondominioFormPage: React.FC = () => {
             </>
           )}
 
-          <Divider>Áreas Comunes</Divider>
+          <Divider>Áreas Comunales</Divider>
           <Form.List name="areasComunes">
             {(fields, { add, remove }) => (
               <>
@@ -345,7 +345,7 @@ const CondominioFormPage: React.FC = () => {
                     block
                     icon={<PlusOutlined />}
                   >
-                    Agregar Área Común
+                    Agregar Área Comunal
                   </Button>
                 </Form.Item>
               </>

@@ -264,7 +264,7 @@ export default function SolicitudesReserva() {
                 </div>
               ))
             ) : (
-              <p className="text-xs text-gray-500">No hay áreas comunes</p>
+              <p className="text-xs text-gray-500">No hay áreas comunales</p>
             )}
           </Card>
         ))}

@@ -10,8 +10,7 @@ import {
 
 const { Title, Text } = Typography;
 
-export default function AreaComunalIndex() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function DashboardPropietariosIndex() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
@@ -46,6 +45,11 @@ export default function AreaComunalIndex() {
       </div>
     </Card>
   );
+
+  // Valores para alícuota y gasto actual
+  const alicuota = data.departamento.alicuota || 0;
+  const ultimoGasto = data.condominio.gastosMensuales.at(-1); // Último gasto
+  const totalAPagar = alicuota * (ultimoGasto?.montoTotal || 0);
 
   return (
     <div className="pt-14 p-6 bg-gray-50 min-h-[calc(100vh-56px)]">
@@ -91,6 +95,34 @@ export default function AreaComunalIndex() {
         </Col>
       </Row>
 
+      {/* Sección de Alícuota a pagar */}
+      <Card className="rounded-xl shadow-md mb-12">
+        <Title level={4} className="text-gray-800 mb-6">Alícuota a Pagar</Title>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} md={8}>
+            <div className="text-gray-600 text-sm mb-1">Tu alícuota asignada</div>
+            <div className="text-xl font-semibold text-blue-600">
+              {(alicuota * 100).toFixed(2)}%
+            </div>
+          </Col>
+          <Col xs={24} md={8}>
+            <div className="text-gray-600 text-sm mb-1">
+              Gasto del mes ({ultimoGasto?.mes || "No disponible"})
+            </div>
+            <div className="text-xl font-semibold text-green-600">
+              ${ultimoGasto?.montoTotal?.toFixed(2) || "0.00"}
+            </div>
+          </Col>
+          <Col xs={24} md={8}>
+            <div className="text-gray-600 text-sm mb-1">Total a pagar</div>
+            <div className="text-xl font-semibold text-red-600">
+              ${totalAPagar.toFixed(2)}
+            </div>
+          </Col>
+        </Row>
+      </Card>
+
+      {/* Información del administrador */}
       <Card className="rounded-xl shadow-md">
         <Title level={4} className="text-gray-800 mb-6">
           Administrador del Condominio
