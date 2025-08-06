@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "@/libs/axios";
 import { Table, Tag, Typography, Row, Col } from "antd";
-import { UserOutlined, CheckCircleOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import { Building2, Home } from "lucide-react";
 import { useRouter } from "next/router";
 
@@ -57,6 +57,7 @@ export default function SuperAdminDashboard() {
     title,
     value,
     extra,
+    bgColor = "bg-white",
     iconColor = "bg-blue-100 text-blue-500",
     onClick,
   }: {
@@ -64,13 +65,14 @@ export default function SuperAdminDashboard() {
     title: string;
     value: string | number;
     extra?: string;
+    bgColor?: string;
     iconColor?: string;
     onClick?: () => void;
   }) => (
     <div
       onClick={onClick}
-      className={`w-full h-full flex flex-col justify-between bg-white rounded-xl p-5 shadow-md hover:shadow-lg transition duration-200 ${
-        onClick ? "cursor-pointer hover:bg-gray-100" : ""
+      className={`w-full h-full flex flex-col justify-between ${bgColor} rounded-xl p-5 shadow-md hover:shadow-lg transition duration-200 ${
+        onClick ? "cursor-pointer hover:opacity-95" : ""
       }`}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
@@ -82,69 +84,73 @@ export default function SuperAdminDashboard() {
         <div className={`p-3 rounded-full text-xl ${iconColor}`}>{icon}</div>
         <div className="flex-1">
           <div className="text-xl font-semibold text-gray-800">{value}</div>
-          <div className="text-gray-500">{title}</div>
-          {extra && <div className="text-xs text-gray-400 mt-1">{extra}</div>}
+          <div className="text-gray-600">{title}</div>
+          {extra && <div className="text-xs text-gray-500 mt-1">{extra}</div>}
         </div>
       </div>
     </div>
   );
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
-      <Title level={2} className="!text-gray-800 mb-10">
+    <div className="pt-14 p-6 bg-gray-50 min-h-[calc(100vh-56px)]">
+      <Title level={2} className="!text-gray-800 mb-10 mt-8">
         Panel de Control - Super Admin
       </Title>
 
       <Row gutter={[20, 20]} className="mb-12">
-        {/* ADMINISTRADORES */}
+        {/* ADMINISTRADORES - Celeste suave */}
         <Col xs={24} sm={12} md={6} className="min-h-[160px]">
           <StatCard
             icon={<UserOutlined />}
             title="Administradores"
             value={admins.length}
             onClick={() => router.push("/superadmin/admins")}
-            extra={`Activos: ${adminsActivos.length} / Inactivos: ${
-              admins.length - adminsActivos.length
-            }`}
+            extra={`Activos: ${adminsActivos.length} / Inactivos: ${admins.length - adminsActivos.length}`}
+            bgColor="bg-blue-50"
+            iconColor="bg-blue-200 text-blue-600"
           />
         </Col>
 
-        {/* CONDOMINIOS GENERAL */}
+        {/* CONDOMINIOS GENERAL - Verde suave */}
         <Col xs={24} sm={12} md={6} className="min-h-[160px]">
           <StatCard
             icon={<Building2 />}
             title="Total Condominios"
             value={condominios.length}
             extra={`Activos: ${condominiosActivos} / Inactivos: ${condominiosInactivos}`}
-            iconColor="bg-green-100 text-green-500"
+            bgColor="bg-green-50"
+            iconColor="bg-green-200 text-green-600"
             onClick={() => router.push("/superadmin/condominios")}
           />
         </Col>
 
-        {/* Torres */}
+        {/* Torres - Azul Agua */}
         <Col xs={24} sm={12} md={6} className="min-h-[160px]">
           <StatCard
             icon={<Building2 />}
             title="Tipo Torres"
             value={cantidadTorres}
             extra="Condominios tipo torre"
-            iconColor="bg-indigo-100 text-indigo-500"
+            bgColor="bg-cyan-50"
+            iconColor="bg-cyan-200 text-cyan-600"
           />
         </Col>
 
-        {/* Casa */}
+        {/* Casa - Rosado suave */}
         <Col xs={24} sm={12} md={6} className="min-h-[160px]">
           <StatCard
             icon={<Home />}
             title="Tipo Casas"
             value={cantidadCasas}
             extra="Condominios tipo casa"
-            iconColor="bg-pink-100 text-pink-500"
+            bgColor="bg-pink-50"
+            iconColor="bg-pink-200 text-pink-600"
           />
         </Col>
       </Row>
 
-      <div className="bg-white p-6 rounded-xl shadow-md">
+      {/* Últimos Condominios - Fondo gris suave */}
+      <div className="bg-gray-50 p-6 rounded-xl shadow-md">
         <Title level={4} className="mb-6 text-gray-800">
           Últimos Condominios Creados
         </Title>

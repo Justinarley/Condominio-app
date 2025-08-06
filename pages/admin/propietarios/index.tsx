@@ -163,8 +163,8 @@ export default function PropietariosIndex() {
   ];
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">Propietarios</h1>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h1 className="text-2xl font-bold mb-6 text-gray-800 mt-16">Propietarios</h1>
 
       {/* Select para filtrar por condominio */}
       <div className="mb-4 w-64">

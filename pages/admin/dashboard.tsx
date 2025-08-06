@@ -37,19 +37,13 @@ type Usuario = {
 export default function AdminDashboard() {
   const [condominios, setCondominios] = useState<Condominio[]>([]);
   const [usuariosPendientes, setUsuariosPendientes] = useState<Usuario[]>([]);
-  const [selectedCondominio, setSelectedCondominio] = useState<string | null>(
-    null
-  );
-  const [guardiasCount, setGuardiasCount] = useState<{
-    activos: number;
-    inactivos: number;
-  }>({
+  const [selectedCondominio, setSelectedCondominio] = useState<string | null>(null);
+  const [guardiasCount, setGuardiasCount] = useState<{ activos: number; inactivos: number }>({
     activos: 0,
     inactivos: 0,
   });
   const [loading, setLoading] = useState(false);
 
-  // Función para cargar condominios y conteos iniciales
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -71,7 +65,6 @@ export default function AdminDashboard() {
     fetchData();
   }, []);
 
-  // Cuando cambia el filtro por condominio, recarga usuarios pendientes con filtro
   const fetchUsuariosPendientes = async (condominioId?: string | null) => {
     setLoading(true);
     try {
@@ -125,12 +118,12 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">Dashboard - Admin</h1>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      {/* Título con espacio debajo del navbar */}
+      <h1 className="text-3xl font-bold text-gray-800 mb-8 mt-16">Dashboard - Admin</h1>
 
       {/* Layout de tarjetas */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        {/* Tarjeta grande de Condominio */}
         <div className="md:col-span-2">
           {condominios.slice(-1).map((condominio) => (
             <Card
@@ -160,7 +153,6 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        {/* Columna de Guardias (vertical stack) */}
         <div className="flex flex-col gap-6 h-full">
           <Card className="rounded-xl shadow-md flex-1">
             <Statistic
@@ -179,7 +171,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Filtro por condominio para usuarios pendientes */}
       <div style={{ marginBottom: 16 }}>
         <Select
           placeholder="Filtrar usuarios pendientes por condominio"
@@ -196,7 +187,6 @@ export default function AdminDashboard() {
         </Select>
       </div>
 
-      {/* Tabla usuarios pendientes */}
       <Card title="Usuarios Inactivos Pendientes" loading={loading}>
         <Table
           dataSource={usuariosPendientes}

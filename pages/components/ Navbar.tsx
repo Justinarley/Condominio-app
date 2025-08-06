@@ -56,43 +56,33 @@ export default function Navbar() {
     isActive: boolean;
   }) => (
     <div
-      className={`relative flex items-center gap-2 px-4 py-2 cursor-pointer transition-all duration-300 ${
-        isActive ? "text-blue-600 font-semibold" : "text-gray-700"
-      } hover:text-blue-600 hover:-translate-y-[2px]`}
+      className={`relative flex items-center gap-2 px-4 py-2 rounded-xl cursor-pointer transition-all duration-300 ${
+        isActive
+          ? "text-white bg-blue-700 shadow-md font-semibold"
+          : "text-blue-800 bg-blue-100"
+      } hover:bg-blue-600 hover:text-white hover:shadow-lg`}
       onClick={() => router.push(path)}
     >
       {icon}
-      <span className="text-sm drop-shadow-sm">{label}</span>
-      <span
-        className={`absolute bottom-0 left-0 h-[2px] w-full transition-transform duration-300 origin-left ${
-          isActive ? "bg-blue-600 scale-x-100" : "bg-blue-600 scale-x-0 group-hover:scale-x-100"
-        }`}
-      ></span>
+      <span className="text-sm">{label}</span>
     </div>
   );
 
   return (
-    <nav className="bg-sky-600 px-4 py-2 flex items-center justify-between shadow-sm">
-      <div className="flex items-center gap-6">
-        <div className="flex gap-2 items-center cursor-pointer">
-          <Building2 size={24} className="text-white" />
-          <span className="text-base font-semibold text-white tracking-wide">
-            App
-          </span>
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-sky-600 to-sky-700 px-6 h-14 flex items-center justify-between shadow-md">
+      {/* Logo + Tabs */}
+      <div className="flex items-center gap-8">
+        {/* Logo */}
+        <div
+          className="flex gap-2 items-center cursor-pointer hover:scale-105 transition-transform"
+          onClick={() => router.push("/")}
+        >
+          <Building2 size={26} className="text-white" />
+          <span className="text-lg font-bold text-white tracking-wide">App</span>
         </div>
-        {user && (
-          <Dropdown menu={{ items: menuItems }} placement="bottomRight" arrow>
-            <div className="flex items-center gap-2 text-white text-sm font-medium cursor-pointer hover:scale-105 transition-transform">
-              <User size={18} />
-              <span>{user.name}</span>
-            </div>
-          </Dropdown>
-        )}
-      </div>
 
-      {/* Tabs Container */}
-      <div className="bg-white shadow-md px-6">
-        <div className="flex items-center gap-6 h-12 group">
+        {/* Tabs */}
+        <div className="bg-blue-100/90 backdrop-blur-sm rounded-xl px-4 py-1 flex items-center gap-4 h-12 shadow-inner">
           {user?.role === "super_admin" && (
             <>
               <TabItem
@@ -137,38 +127,48 @@ export default function Navbar() {
                 isActive={currentPath === "/admin/security"}
               />
               <TabItem
-                icon={<Home size={18} className="text-white" />}
+                icon={<Home size={18} />}
                 label="Mis Condominios"
                 path="/admin/condominios"
                 isActive={currentPath === "/admin/condominios"}
               />
               <TabItem
-                icon={<Building size={18} className="text-white" />}
-                label="Areas Comunales"
+                icon={<Building size={18} />}
+                label="Áreas Comunales"
                 path="/admin/areas-comunales"
                 isActive={currentPath === "/admin/areas-comunales"}
               />
             </>
           )}
+
           {user?.role === "propietario" && (
             <>
               <TabItem
-                icon={<LayoutDashboard size={18} className="text-white" />}
+                icon={<LayoutDashboard size={18} />}
                 label="Dashboard"
                 path="/propietario/dashboard"
                 isActive={currentPath === "/propietario/dashboard"}
               />
               <TabItem
-                icon={<Building size={18} className="text-white" />}
-                label="Area comunal"
+                icon={<Building size={18} />}
+                label="Área Comunal"
                 path="/propietario/area-comunal"
                 isActive={currentPath === "/propietario/area-comunal"}
-                
               />
             </>
           )}
         </div>
       </div>
+
+      {/* Usuario al lado derecho */}
+      {user && (
+        <Dropdown menu={{ items: menuItems }} placement="bottomRight" arrow>
+          <div className="flex items-center gap-2 text-white text-sm font-medium cursor-pointer px-4 py-2 rounded-xl hover:bg-white/20 transition-all">
+            <User size={20} />
+            <span>{user.name}</span>
+          </div>
+        </Dropdown>
+      )}
     </nav>
   );
 }

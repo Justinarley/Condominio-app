@@ -164,8 +164,8 @@ export default function CondominiosIndex() {
   ];
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">Condominios</h1>
+    <div className="pt-14 p-6 bg-gray-50 min-h-[calc(100vh-56px)]">
+      <h1 className="text-2xl font-bold mb-6 mt-4 text-gray-800">Condominios</h1>
 
       <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <CondominioSelect

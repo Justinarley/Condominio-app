@@ -163,8 +163,8 @@ export default function GuardiasIndex() {
   ];
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">Guardias</h1>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h1 className="text-2xl font-bold mb-6 text-gray-800 mt-16">Guardias</h1>
 
       <div className="mb-4 flex justify-between items-center gap-2">
         <Select

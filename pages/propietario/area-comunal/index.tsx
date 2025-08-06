@@ -75,8 +75,8 @@ export default function AreaComunalIndex() {
   };
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
-      <Title level={2} className="mb-8 text-gray-800">
+    <div className="pt-14 p-6 bg-gray-50 min-h-[calc(100vh-56px)]">
+      <Title level={2} className="!text-gray-800 mb-10 mt-8">
         Áreas Comunes
       </Title>
 
