@@ -78,7 +78,9 @@ export default function Navbar() {
           onClick={() => router.push("/")}
         >
           <Building2 size={26} className="text-white" />
-          <span className="text-lg font-bold text-white tracking-wide">App</span>
+          <span className="text-lg font-bold text-white tracking-wide">
+            App
+          </span>
         </div>
 
         {/* Tabs */}
@@ -134,6 +136,12 @@ export default function Navbar() {
               />
               <TabItem
                 icon={<Building size={18} />}
+                label="Pagos Alicuotas"
+                path="/admin/pagos-alicuotas"
+                isActive={currentPath === "/admin/pagos-alicuotas"}
+              />
+              <TabItem
+                icon={<Building size={18} />}
                 label="Áreas Comunales"
                 path="/admin/areas-comunales"
                 isActive={currentPath === "/admin/areas-comunales"}
@@ -148,6 +156,12 @@ export default function Navbar() {
                 label="Dashboard"
                 path="/propietario/dashboard"
                 isActive={currentPath === "/propietario/dashboard"}
+              />
+              <TabItem
+                icon={<Building size={18} />}
+                label="Pagos Alicuotas"
+                path="/propietario/pagos-alicuotas"
+                isActive={currentPath === "/propietario/pagos-alicuotas"}
               />
               <TabItem
                 icon={<Building size={18} />}

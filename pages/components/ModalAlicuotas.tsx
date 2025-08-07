@@ -9,6 +9,7 @@ import {
   Typography,
   message,
   Alert,
+  Progress,
 } from "antd";
 import api from "@/libs/axios";
 
@@ -39,9 +40,9 @@ export function IngresarAlicuotasModal({
   const [departamentosPorGrupo, setDepartamentosPorGrupo] = useState<
     Record<string, Departamento[]>
   >({});
-  const [grupoSeleccionado, setGrupoSeleccionado] = useState<string | undefined>(
-    undefined
-  );
+  const [grupoSeleccionado, setGrupoSeleccionado] = useState<
+    string | undefined
+  >(undefined);
   const [departamentosSeleccionados, setDepartamentosSeleccionados] = useState<
     string[]
   >([]);
@@ -71,6 +72,7 @@ export function IngresarAlicuotasModal({
         api.get(`/admin/gasto-mensual-actual/${condominioId}`),
       ]);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const dataRaw: Record<string, any[]> = resDeptos.data;
       const dataMapped: Record<string, Departamento[]> = {};
       for (const grupo in dataRaw) {
@@ -132,7 +134,8 @@ export function IngresarAlicuotasModal({
       });
     });
 
-    const sumaNueva = sumaActualSinSeleccionados + alicuota * departamentosSeleccionados.length;
+    const sumaNueva =
+      sumaActualSinSeleccionados + alicuota * departamentosSeleccionados.length;
     return sumaNueva <= 1.001;
   }, [alicuota, departamentosSeleccionados, departamentosPorGrupo]);
 
@@ -150,7 +153,8 @@ export function IngresarAlicuotasModal({
       });
     });
 
-    const sumaNueva = sumaActualSinSeleccionados + alicuota * departamentosSeleccionados.length;
+    const sumaNueva =
+      sumaActualSinSeleccionados + alicuota * departamentosSeleccionados.length;
 
     if (sumaNueva > 1.001) {
       message.error(
@@ -186,11 +190,28 @@ export function IngresarAlicuotasModal({
       title: "Alícuota",
       dataIndex: "alicuota",
       key: "alicuota",
-      render: (value: number) => (value != null ? value.toFixed(2) : "-"),
+      render: (value: number) => {
+        const porcentaje = value ? value * 100 : 0;
+        return (
+          <div style={{ minWidth: 120 }}>
+            <Progress
+              percent={porcentaje}
+              size="small"
+              strokeColor="#1890ff"
+              style={{ marginBottom: 4 }}
+              format={(percent) => `${percent?.toFixed(2)}%`}
+            />
+            <div style={{ textAlign: "center", fontWeight: "bold" }}>
+              {porcentaje.toFixed(2)}%
+            </div>
+          </div>
+        );
+      },
     },
     {
       title: "Valor a pagar",
       key: "valorAPagar",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       render: (_: any, record: Departamento) => {
         const valor = (record.alicuota ?? 0) * valorPorUnidad;
         return `$${valor.toFixed(2)}`;
@@ -237,7 +258,8 @@ export function IngresarAlicuotasModal({
           <div style={{ marginBottom: 12 }}>
             <Title level={5}>Gasto mensual ({gastoMesActual.mes}):</Title>
             <Text strong style={{ fontSize: 16 }}>
-              ${gastoMesActual.montoTotal.toLocaleString(undefined, {
+              $
+              {gastoMesActual.montoTotal.toLocaleString(undefined, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })}
@@ -287,33 +309,53 @@ export function IngresarAlicuotasModal({
             onChange: (selectedRowKeys) =>
               setDepartamentosSeleccionados(selectedRowKeys as string[]),
           }}
-          footer={() => (
-            <>
-              <div style={{ textAlign: "right", fontWeight: "bold" }}>
-                Total Alícuotas: {totalAlicuotas.toFixed(2)} | Total Valor a pagar: $
-                {sumaValorAPagar.toFixed(2)}
-              </div>
-              {mostrarAvisoAlicuota && (
-                <Alert
-                  style={{ marginTop: 8 }}
-                  message="La suma total de alícuotas es menor a 1."
-                  type="warning"
-                  showIcon
-                />
-              )}
-            </>
-          )}
+          footer={() => {
+            const porcentajeTotal = totalAlicuotas * 100;
+            return (
+              <>
+                <div style={{ textAlign: "right", fontWeight: "bold" }}>
+                  <span style={{ marginRight: 8 }}>Total Alícuotas:</span>
+                  <Progress
+                    percent={porcentajeTotal}
+                    size="small"
+                    strokeColor="#1890ff"
+                    style={{
+                      width: 150,
+                      display: "inline-block",
+                      verticalAlign: "middle",
+                      marginRight: 8,
+                    }}
+                    format={(percent) => `${percent?.toFixed(2)}%`}
+                  />
+                  <span>
+                    | Total Valor a pagar: ${sumaValorAPagar.toFixed(2)}
+                  </span>
+                </div>
+                {mostrarAvisoAlicuota && (
+                  <Alert
+                    style={{ marginTop: 8 }}
+                    message="La suma total de alícuotas es menor a 1."
+                    type="warning"
+                    showIcon
+                  />
+                )}
+              </>
+            );
+          }}
         />
 
         {/* Input número alícuota */}
+        <div style={{ marginTop: 12, marginBottom: 4, fontWeight: "bold" }}>
+          Ingresa el porcentaje de la alícuota %
+        </div>
         <InputNumber
           min={0}
-          max={1}
-          step={0.001}
-          style={{ width: "100%", marginTop: 12 }}
-          placeholder="Alícuota (0 - 1)"
-          value={alicuota}
-          onChange={(value) => setAlicuota(value ?? 0)}
+          max={100}
+          step={1}
+          style={{ width: "100%" }}
+          placeholder="Alícuota (%)"
+          value={Math.round(alicuota * 100)} // Mostrar en %
+          onChange={(value) => setAlicuota((value ?? 0) / 100)} // Convertir a decimal
         />
       </Space>
     </Modal>

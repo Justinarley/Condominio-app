@@ -122,6 +122,7 @@ export default function CondominiosAdminIndex() {
     {
       title: "Acciones",
       key: "acciones",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       render: (_: any, record: Condominio) => (
         <Space>
           <Button

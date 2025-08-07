@@ -38,6 +38,7 @@ export function CrearGastoMensualModal({
     return current.isBefore(dayjs().startOf("month"), "month");
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
@@ -56,6 +57,7 @@ export function CrearGastoMensualModal({
       message.success("Gasto mensual registrado con éxito");
       setModalVisible(false);
       form.resetFields();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       const msg =
         error.response?.data?.message || "Error al crear gasto mensual";

@@ -1,14 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "@/libs/axios";
-import {
-  Card,
-  Statistic,
-  Table,
-  Tag,
-  Tooltip,
-  Select,
-  message,
-} from "antd";
+import { Card, Statistic, Table, Tag, Tooltip, Select, message } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
 
 type Condominio = {
@@ -34,44 +26,72 @@ type Usuario = {
   departamentoCodigo?: string;
 };
 
+type Departamento = {
+  _id: string;
+  codigo: string;
+  nombre: string;
+  condominio: Condominio;
+};
+
+type Pago = {
+  _id: string;
+  pagadoPor: Usuario; // Objeto Usuario completo
+  departamento: Departamento; // Objeto Departamento completo
+  montoPagado: number;
+  mes: string;
+  estado: "pendiente" | "pagado" | "rechazado";
+  fechaPago: string;
+  tipoPago: string;
+};
+
 export default function AdminDashboard() {
   const [condominios, setCondominios] = useState<Condominio[]>([]);
   const [usuariosPendientes, setUsuariosPendientes] = useState<Usuario[]>([]);
-  const [selectedCondominio, setSelectedCondominio] = useState<string | null>(null);
+  const [selectedCondominio, setSelectedCondominio] = useState<string | null>(
+    null
+  );
   const [guardiasCount, setGuardiasCount] = useState<{ activos: number; inactivos: number }>({
     activos: 0,
     inactivos: 0,
   });
   const [loading, setLoading] = useState(false);
 
+  // Estado para pagos
+  const [pagos, setPagos] = useState<Pago[]>([]);
+  const [pagosLoading, setPagosLoading] = useState(false);
+
+  // Carga inicial de datos
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [resCondominios, resUsuarios, resGuardias] = await Promise.all([
-          api.get("/admin/condominios"),
-          api.get("/admin/usuarios-pendientes"),
-          api.get("/admin/guardias-count"),
-        ]);
-        setCondominios(resCondominios.data);
-        setUsuariosPendientes(resUsuarios.data);
-        setGuardiasCount(resGuardias.data);
-      } catch {
-        // Manejar error
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    fetchDashboardData();
   }, []);
 
+  const fetchDashboardData = async () => {
+    setLoading(true);
+    try {
+      const [resCondominios, resUsuarios, resGuardias, resPagos] = await Promise.all([
+        api.get("/admin/condominios"),
+        api.get("/admin/usuarios-pendientes"),
+        api.get("/admin/guardias-count"),
+        api.get("/admin/pagos-pendientes"),
+      ]);
+      setCondominios(resCondominios.data);
+      setUsuariosPendientes(resUsuarios.data);
+      setGuardiasCount(resGuardias.data);
+      setPagos(resPagos.data);
+    } catch (error) {
+      message.error("Error cargando datos del dashboard");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filtrar usuarios pendientes por condominio
   const fetchUsuariosPendientes = async (condominioId?: string | null) => {
     setLoading(true);
     try {
       let url = "/admin/usuarios-pendientes";
-      if (condominioId) {
-        url += `?condominioId=${condominioId}`;
-      }
+      if (condominioId) url += `?condominioId=${condominioId}`;
       const res = await api.get(url);
       setUsuariosPendientes(res.data);
     } catch {
@@ -86,43 +106,43 @@ export default function AdminDashboard() {
     fetchUsuariosPendientes(value || null);
   };
 
-  const refrescarDashboardData = async () => {
-    setLoading(true);
-    try {
-      const [resCondominios, resUsuarios, resGuardias] = await Promise.all([
-        api.get("/admin/condominios"),
-        api.get(
-          "/admin/usuarios-pendientes" +
-            (selectedCondominio ? `?condominioId=${selectedCondominio}` : "")
-        ),
-        api.get("/admin/guardias-count"),
-      ]);
-      setCondominios(resCondominios.data);
-      setUsuariosPendientes(resUsuarios.data);
-      setGuardiasCount(resGuardias.data);
-    } catch (error) {
-      message.error("Error actualizando el dashboard");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Aprobar usuario
   const aprobarUsuario = async (userId: string) => {
     try {
       await api.put(`/admin/usuarios/${userId}/aprobar`, { aprobar: true });
       message.success("Usuario aprobado correctamente");
-      await refrescarDashboardData();
+      await fetchDashboardData();
     } catch (error) {
-      console.error("Error aprobando usuario", error);
+      message.error("Error aprobando usuario");
+      console.error(error);
+    }
+  };
+
+  // Cambiar estado de pago (aprobar/rechazar)
+  const cambiarEstadoPago = async (
+    pagoId: string,
+    nuevoEstado: "pagado" | "rechazado"
+  ) => {
+    setPagosLoading(true);
+    try {
+      await api.put(`/admin/pagos/${pagoId}/estado`, { estado: nuevoEstado });
+      message.success(`Pago ${nuevoEstado === "pagado" ? "aprobado" : "rechazado"} correctamente`);
+      // Refrescar solo los pagos para mejor performance
+      const res = await api.get("/admin/pagos-pendientes");
+      setPagos(res.data);
+    } catch (error) {
+      message.error("Error actualizando estado de pago");
+      console.error(error);
+    } finally {
+      setPagosLoading(false);
     }
   };
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      {/* Título con espacio debajo del navbar */}
       <h1 className="text-3xl font-bold text-gray-800 mb-8 mt-16">Dashboard - Admin</h1>
 
-      {/* Layout de tarjetas */}
+      {/* Tarjetas resumen */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         <div className="md:col-span-2">
           {condominios.slice(-1).map((condominio) => (
@@ -171,6 +191,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
+      {/* Filtro de usuarios pendientes */}
       <div style={{ marginBottom: 16 }}>
         <Select
           placeholder="Filtrar usuarios pendientes por condominio"
@@ -187,7 +208,8 @@ export default function AdminDashboard() {
         </Select>
       </div>
 
-      <Card title="Usuarios Inactivos Pendientes" loading={loading}>
+      {/* Tabla usuarios pendientes */}
+      <Card title="Usuarios pendientes por aprobar" loading={loading}>
         <Table
           dataSource={usuariosPendientes}
           rowKey="_id"
@@ -226,6 +248,99 @@ export default function AdminDashboard() {
                   />
                 </Tooltip>
               ),
+            },
+          ]}
+        />
+      </Card>
+
+      {/* Tabla pagos pendientes */}
+      <Card title="Pagos por aprobar" loading={pagosLoading} className="mt-10 rounded-xl shadow-md">
+        <Table
+          dataSource={pagos}
+          rowKey="_id"
+          pagination={{ pageSize: 10 }}
+          columns={[
+            {
+              title: "Usuario",
+              dataIndex: ["pagadoPor", "name"],
+              key: "usuario",
+              render: (name: string, record: Pago) => <span>{name || record.pagadoPor?._id || "N/A"}</span>,
+            },
+            {
+              title: "Departamento",
+              key: "departamento",
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              render: (_: any, record: Pago) => (
+                <span>
+                  {record.departamento?.codigo} - {record.departamento?.nombre}
+                </span>
+              ),
+            },
+            {
+              title: "Condominio",
+              key: "condominio",
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              render: (_: any, record: Pago) => <span>{record.departamento?.condominio?.name || "N/A"}</span>,
+            },
+            {
+              title: "Tipo de Pago",
+              dataIndex: "tipoPago",
+              key: "tipoPago",
+              render: (tipoPago: string) => (
+                <Tag color="blue" style={{ textTransform: "capitalize" }}>
+                  {tipoPago}
+                </Tag>
+              ),
+            },
+            {
+              title: "Monto",
+              dataIndex: "montoPagado",
+              key: "montoPagado",
+              render: (montoPagado: number) => `$${montoPagado.toFixed(2)}`,
+            },
+            {
+              title: "Mes",
+              dataIndex: "mes",
+              key: "mes",
+            },
+            {
+              title: "Estado",
+              dataIndex: "estado",
+              key: "estado",
+              render: (estado: string) => {
+                let color = "default";
+                if (estado === "pendiente") color = "orange";
+                if (estado === "pagado") color = "green";
+                if (estado === "rechazado") color = "red";
+                return <Tag color={color}>{estado.toUpperCase()}</Tag>;
+              },
+            },
+            {
+              title: "Acciones",
+              key: "acciones",
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              render: (_: any, record: Pago) => {
+                if (record.estado !== "pendiente") return null;
+
+                return (
+                  <div className="flex gap-2">
+                    <Tag
+                      color="green"
+                      className="cursor-pointer"
+                      onClick={() => cambiarEstadoPago(record._id, "pagado")}
+                    >
+                      Aprobar
+                    </Tag>
+                    <Tag
+                      color="red"
+                      className="cursor-pointer"
+                      onClick={() => cambiarEstadoPago(record._id, "rechazado")}
+                    >
+                      Rechazar
+                    </Tag>
+                  </div>
+                );
+              },
             },
           ]}
         />
