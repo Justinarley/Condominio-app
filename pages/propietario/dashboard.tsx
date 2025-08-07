@@ -132,12 +132,11 @@ export default function DashboardPropietariosIndex() {
         Panel del Usuario
       </Title>
 
-      {/* ... (los cards para usuario, condominio, etc, igual que antes) */}
-
-      <Row gutter={[20, 20]} className="mb-12">
+      {/* Tarjetas informativas */}
+      <Row gutter={[20, 20]} className="mb-12" align="stretch">
         {/* Usuario */}
         <Col xs={24} sm={12} md={6}>
-          <Card className="rounded-xl shadow-md hover:shadow-lg transition duration-200">
+          <Card className="rounded-xl shadow-md hover:shadow-lg transition duration-200 h-full">
             <div className="flex items-start gap-4">
               <div className="p-3 rounded-full text-xl bg-blue-100 text-blue-500">
                 <UserOutlined />
@@ -153,7 +152,7 @@ export default function DashboardPropietariosIndex() {
         </Col>
         {/* Condominio */}
         <Col xs={24} sm={12} md={6}>
-          <Card className="rounded-xl shadow-md hover:shadow-lg transition duration-200">
+          <Card className="rounded-xl shadow-md hover:shadow-lg transition duration-200 h-full">
             <div className="flex items-start gap-4">
               <div className="p-3 rounded-full text-xl bg-green-100 text-green-600">
                 <ApartmentOutlined />
@@ -169,7 +168,7 @@ export default function DashboardPropietariosIndex() {
         </Col>
         {/* Departamento */}
         <Col xs={24} sm={12} md={6}>
-          <Card className="rounded-xl shadow-md hover:shadow-lg transition duration-200">
+          <Card className="rounded-xl shadow-md hover:shadow-lg transition duration-200 h-full">
             <div className="flex items-start gap-4">
               <div className="p-3 rounded-full text-xl bg-purple-100 text-purple-600">
                 <HomeOutlined />
@@ -185,7 +184,7 @@ export default function DashboardPropietariosIndex() {
         </Col>
         {/* Solicitudes */}
         <Col xs={24} sm={12} md={6}>
-          <Card className="rounded-xl shadow-md hover:shadow-lg transition duration-200">
+          <Card className="rounded-xl shadow-md hover:shadow-lg transition duration-200 h-full">
             <div className="flex items-start gap-4">
               <div className="p-3 rounded-full text-xl bg-yellow-100 text-yellow-600">
                 <FileTextOutlined />
