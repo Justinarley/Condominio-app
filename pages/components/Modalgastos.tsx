@@ -8,7 +8,13 @@ import {
   DatePicker,
   Input,
 } from "antd";
-import esES from "antd/es/date-picker/locale/es_ES"; 
+import esES from "antd/es/date-picker/locale/es_ES";
+import {
+  CalendarOutlined,
+  DollarOutlined,
+  FileTextOutlined,
+  PlusCircleOutlined,
+} from "@ant-design/icons";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 import api from "@/libs/axios";
@@ -31,18 +37,14 @@ export function CrearGastoMensualModal({
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
-  // Bloquear meses anteriores al mes actual
   const disabledMonth = (current: dayjs.Dayjs) => {
     if (!current) return false;
-    // no permitir meses anteriores al inicio del mes actual
     return current.isBefore(dayjs().startOf("month"), "month");
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
-      // Formatear mes a "agosto 2025"
       const mesFormateado = values.mes
         .locale("es")
         .format("MMMM YYYY")
@@ -57,7 +59,6 @@ export function CrearGastoMensualModal({
       message.success("Gasto mensual registrado con éxito");
       setModalVisible(false);
       form.resetFields();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       const msg =
         error.response?.data?.message || "Error al crear gasto mensual";
@@ -69,20 +70,32 @@ export function CrearGastoMensualModal({
 
   return (
     <Modal
-      title={`Crear gasto mensual - ${condominioName}`}
+      title={
+        <div className="text-lg font-semibold text-blue-600 flex items-center gap-2">
+          <PlusCircleOutlined />
+          Crear gasto mensual - {condominioName}
+        </div>
+      }
       open={modalVisible}
       onCancel={() => setModalVisible(false)}
       footer={null}
-      destroyOnHidden
+      destroyOnClose
+      className="rounded-xl"
     >
       <Form
         form={form}
         layout="vertical"
         onFinish={onFinish}
         initialValues={{ montoTotal: undefined, descripcion: "" }}
+        className="pt-2"
       >
         <Form.Item
-          label="Mes y Año"
+          label={
+            <span className="flex items-center gap-2 text-gray-700">
+              <CalendarOutlined />
+              Mes y Año
+            </span>
+          }
           name="mes"
           rules={[{ required: true, message: "Selecciona mes y año" }]}
         >
@@ -96,7 +109,12 @@ export function CrearGastoMensualModal({
         </Form.Item>
 
         <Form.Item
-          label="Monto total"
+          label={
+            <span className="flex items-center gap-2 text-gray-700">
+              <DollarOutlined />
+              Monto total
+            </span>
+          }
           name="montoTotal"
           rules={[
             { required: true, message: "Por favor ingresa el monto" },
@@ -107,15 +125,33 @@ export function CrearGastoMensualModal({
             },
           ]}
         >
-          <InputNumber min={0} style={{ width: "100%" }} />
-        </Form.Item>  
+          <InputNumber
+            min={0}
+            style={{ width: "100%" }}
+            placeholder="0.00"
+          />
+        </Form.Item>
 
-        <Form.Item label="Descripción" name="descripcion">
+        <Form.Item
+          label={
+            <span className="flex items-center gap-2 text-gray-700">
+              <FileTextOutlined />
+              Descripción
+            </span>
+          }
+          name="descripcion"
+        >
           <Input.TextArea placeholder="Opcional" rows={3} />
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" loading={loading} block>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={loading}
+            block
+            className="bg-blue-600 hover:bg-blue-700 rounded-lg"
+          >
             Crear gasto mensual
           </Button>
         </Form.Item>
