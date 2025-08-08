@@ -103,7 +103,7 @@ const CondominioFormPage: React.FC = () => {
         message.success("Condominio creado");
       }
       router.push("/superadmin/condominios");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       message.error(
         error.response?.data?.message || "Error al guardar condominio"
@@ -129,20 +129,6 @@ const CondominioFormPage: React.FC = () => {
           requiredMark={false}
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <Form.Item
-              label={<span className="font-medium text-gray-600">ID personalizado (Ej: CND-001)</span>}
-              name="id"
-              rules={[
-                { required: true, message: "Por favor ingresa el ID" },
-                {
-                  pattern: /^CND-\d{3}$/,
-                  message: "Formato inválido. Usa CND-001, etc.",
-                },
-              ]}
-            >
-              <Input disabled={isEditing} placeholder="CND-001" />
-            </Form.Item>
-
             <Form.Item
               label="Nombre"
               name="name"
@@ -239,7 +225,12 @@ const CondominioFormPage: React.FC = () => {
                       </Card>
                     ))}
                     <Form.Item>
-                      <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                      <Button
+                        type="dashed"
+                        onClick={() => add()}
+                        block
+                        icon={<PlusOutlined />}
+                      >
                         Agregar Torre
                       </Button>
                     </Form.Item>
@@ -284,7 +275,12 @@ const CondominioFormPage: React.FC = () => {
                       </Card>
                     ))}
                     <Form.Item>
-                      <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                      <Button
+                        type="dashed"
+                        onClick={() => add()}
+                        block
+                        icon={<PlusOutlined />}
+                      >
                         Agregar Casas
                       </Button>
                     </Form.Item>

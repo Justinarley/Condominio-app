@@ -104,7 +104,9 @@ export default function Register() {
           <Form.Item
             label="Teléfono"
             name="phone"
-            rules={[{ required: true, message: "Por favor ingresa tu teléfono" }]}
+            rules={[
+              { required: true, message: "Por favor ingresa tu teléfono" },
+            ]}
           >
             <Input size="large" />
           </Form.Item>
@@ -114,7 +116,10 @@ export default function Register() {
             name="password"
             rules={[
               { required: true, message: "Por favor ingresa una contraseña" },
-              { min: 6, message: "La contraseña debe tener mínimo 6 caracteres" },
+              {
+                min: 6,
+                message: "La contraseña debe tener mínimo 6 caracteres",
+              },
             ]}
             hasFeedback
           >
@@ -152,11 +157,17 @@ export default function Register() {
           <Form.Item
             label="Tipo de identificación"
             name="identificationType"
-            rules={[{ required: true, message: "Selecciona tipo de identificación" }]}
+            rules={[
+              { required: true, message: "Selecciona tipo de identificación" },
+            ]}
           >
             <Select>
-              <Select.Option value={IdentificationType.CEDULA}>Cédula</Select.Option>
-              <Select.Option value={IdentificationType.PASAPORTE}>Pasaporte</Select.Option>
+              <Select.Option value={IdentificationType.CEDULA}>
+                Cédula
+              </Select.Option>
+              <Select.Option value={IdentificationType.PASAPORTE}>
+                Pasaporte
+              </Select.Option>
               <Select.Option value={IdentificationType.RUC}>RUC</Select.Option>
             </Select>
           </Form.Item>
@@ -165,8 +176,14 @@ export default function Register() {
             label="Número de identificación"
             name="identificationNumber"
             rules={[
-              { required: true, message: "Por favor ingresa número de identificación" },
-              { pattern: /^\d{8,13}$/, message: "Número inválido (8 a 13 dígitos)" },
+              {
+                required: true,
+                message: "Por favor ingresa número de identificación",
+              },
+              {
+                pattern: /^\d{8,13}$/,
+                message: "Número inválido (8 a 13 dígitos)",
+              },
             ]}
           >
             <Input />
@@ -178,40 +195,6 @@ export default function Register() {
               <Radio value={UserRole.GUARDIA}>Guardia</Radio>
             </Radio.Group>
           </Form.Item>
-
-          <Form.Item shouldUpdate={(prev, curr) => prev.role !== curr.role}>
-            {({ getFieldValue }) =>
-              getFieldValue("role") === UserRole.PROPIETARIO && (
-                <>
-                  <Form.Item
-                    label="Número de residentes"
-                    name="numberOfResidents"
-                    rules={[
-                      { required: true, message: "Ingresa número de residentes" },
-                      { type: "number", min: 1, message: "Debe ser al menos 1" },
-                    ]}
-                  >
-                    <InputNumber min={1} />
-                  </Form.Item>
-
-                  <Form.Item
-                    label="Departamento"
-                    name="departamentoId"
-                    rules={[{ required: true, message: "Selecciona un departamento" }]}
-                  >
-                    <Select placeholder="Selecciona un departamento">
-                      {departamentosFiltrados.map((d) => (
-                        <Select.Option key={d._id} value={d._id}>
-                          {d.nombre}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </>
-              )
-            }
-          </Form.Item>
-
           <Form.Item
             label="Condominio"
             name="condominioId"
@@ -225,6 +208,47 @@ export default function Register() {
               ))}
             </Select>
           </Form.Item>
+
+          <Form.Item shouldUpdate={(prev, curr) => prev.role !== curr.role}>
+            {({ getFieldValue }) =>
+              getFieldValue("role") === UserRole.PROPIETARIO && (
+                <>
+                  <Form.Item
+                    label="Departamento"
+                    name="departamentoId"
+                    rules={[
+                      { required: true, message: "Selecciona un departamento" },
+                    ]}
+                  >
+                    <Select placeholder="Selecciona un departamento">
+                      {departamentosFiltrados.map((d) => (
+                        <Select.Option key={d._id} value={d._id}>
+                          {d.nombre}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                  <Form.Item
+                    label="Número de residentes"
+                    name="numberOfResidents"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Ingresa número de residentes",
+                      },
+                      {
+                        type: "number",
+                        min: 1,
+                        message: "Debe ser al menos 1",
+                      },
+                    ]}
+                  >
+                    <InputNumber min={1} />
+                  </Form.Item>
+                </>
+              )
+            }
+          </Form.Item>
         </>
       ),
     },
@@ -235,9 +259,15 @@ export default function Register() {
           <Form.List name="vehicles">
             {(fields, { add, remove }) => (
               <>
-                <label className="block font-semibold text-gray-700">Vehículos</label>
+                <label className="block font-semibold text-gray-700">
+                  Vehículos
+                </label>
                 {fields.map(({ key, name, ...restField }) => (
-                  <Space key={key} direction="vertical" style={{ display: "flex", marginBottom: 8 }}>
+                  <Space
+                    key={key}
+                    direction="vertical"
+                    style={{ display: "flex", marginBottom: 8 }}
+                  >
                     <Form.Item
                       {...restField}
                       name={[name, "plate"]}
@@ -286,7 +316,9 @@ export default function Register() {
           <Form.Item
             label="Nombre de contacto de emergencia"
             name="emergencyContactName"
-            rules={[{ required: true, message: "Ingresa nombre contacto emergencia" }]}
+            rules={[
+              { required: true, message: "Ingresa nombre contacto emergencia" },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -294,7 +326,12 @@ export default function Register() {
           <Form.Item
             label="Teléfono de contacto de emergencia"
             name="emergencyContactPhone"
-            rules={[{ required: true, message: "Ingresa teléfono contacto emergencia" }]}
+            rules={[
+              {
+                required: true,
+                message: "Ingresa teléfono contacto emergencia",
+              },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -314,12 +351,14 @@ export default function Register() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#a0d8ef] p-4">
       <div className="bg-white w-full max-w-5xl rounded-2xl shadow-lg grid grid-cols-1 md:grid-cols-2 overflow-hidden">
-        
         {/* Panel Izquierdo */}
         <div className="hidden md:flex flex-col items-center justify-center bg-white p-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">¡Bienvenido!</h2>
+          <h2 className="text-3xl font-bold text-gray-800 mb-4">
+            ¡Bienvenido!
+          </h2>
           <p className="text-gray-600 text-center mb-6">
-            Empieza creando tu cuenta aquí. Completa los pasos para registrar tu usuario.
+            Empieza creando tu cuenta aquí. Completa los pasos para registrar tu
+            usuario.
           </p>
 
           <p className="text-sm text-gray-500">
@@ -352,7 +391,10 @@ export default function Register() {
           >
             <div className="flex-grow overflow-y-auto">
               {steps.map((step, index) => (
-                <div key={index} style={{ display: index === currentStep ? 'block' : 'none' }}>
+                <div
+                  key={index}
+                  style={{ display: index === currentStep ? "block" : "none" }}
+                >
                   {step.content}
                 </div>
               ))}
@@ -366,7 +408,10 @@ export default function Register() {
               )}
 
               {currentStep < steps.length - 1 ? (
-                <Button type="primary" onClick={() => setCurrentStep(currentStep + 1)}>
+                <Button
+                  type="primary"
+                  onClick={() => setCurrentStep(currentStep + 1)}
+                >
                   Siguiente
                 </Button>
               ) : (

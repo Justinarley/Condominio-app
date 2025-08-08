@@ -1,24 +1,14 @@
 import { useEffect, useState } from "react";
 import api from "@/libs/axios";
-import {
-  Card,
-  Row,
-  Col,
-  Typography,
-  Table,
-  Tag,
-  message,
-  Button,
-  Modal,
-} from "antd";
+import { Card, Typography, Table, Tag, message, Button } from "antd";
 import { FilePdfOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 type Pago = {
   _id: string;
-  departamento: string | { nombre?: string }; // depende cómo venga
+  departamento: string | { nombre?: string };
   fechaPago: string;
   montoPagado: number;
   tipoPago: string;
@@ -45,11 +35,25 @@ export default function PagosAlicuotaIndex() {
     fetchPagos();
   }, []);
 
-  // Función para simular descarga de PDF (puedes reemplazar con lógica real)
-  const handleDownloadPdf = (pagoId: string) => {
-    // Aquí puedes llamar a la API para obtener el PDF o abrir una URL
-    message.info(`Descargando PDF del pago ${pagoId}`);
-    // Ejemplo: window.open(`/pagos/${pagoId}/pdf`, '_blank');
+  const handleDownloadPdf = async (pagoId: string) => {
+    try {
+      const { data } = await api.get(`/pdf/recibo/${pagoId}`, {
+        responseType: "blob",
+      });
+      const fileURL = URL.createObjectURL(
+        new Blob([data], { type: "application/pdf" })
+      );
+      const link = document.createElement("a");
+      link.href = fileURL;
+      link.download = `recibo-${pagoId}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(fileURL);
+    } catch (error) {
+      console.error("Error al descargar el PDF:", error);
+      message.error("Error al descargar el PDF");
+    }
   };
 
   const columns = [

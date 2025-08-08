@@ -98,7 +98,7 @@ export default function DashboardPropietariosIndex() {
       } else {
         setEstadoPago("pendiente");
       }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error(err);
       const backendMsg = err?.response?.data?.message;
@@ -247,7 +247,6 @@ export default function DashboardPropietariosIndex() {
           size="large"
           className="mt-6"
           onClick={() => setVisibleModal(true)}
-          disabled={estadoPago === "pagado"}
         >
           Pagar alícuota
         </Button>
