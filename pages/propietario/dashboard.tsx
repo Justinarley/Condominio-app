@@ -194,7 +194,7 @@ export default function DashboardPropietariosIndex() {
                 <div className="text-xl font-semibold text-gray-800">
                   {data.solicitudes}
                 </div>
-                <div className="text-gray-500">Totales realizadas</div>
+                <div className="text-gray-500">Solicitudes realizadas</div>
               </div>
             </div>
           </Card>
