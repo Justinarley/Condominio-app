@@ -58,9 +58,11 @@ export default function Register() {
     form.setFieldsValue({ departamentoId: undefined });
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { confirmPassword, ...payload } = values;
       payload.status = UserStatus.INACTIVE;
 
@@ -72,8 +74,21 @@ export default function Register() {
       setTimeout(() => {
         router.push("/login");
       }, 1500);
-    } catch (error) {
-      message.error("Error al registrar usuario");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      let errorMsg = "Error al registrar usuario";
+      if (error.response && error.response.data) {
+        if (typeof error.response.data.message === "string") {
+          errorMsg = error.response.data.message;
+        } else if (error.response.data.code === 11000) {
+          const duplicateField = Object.keys(error.response.data.keyPattern)[0];
+          errorMsg = `El valor para '${duplicateField}' ya está registrado.`;
+        }
+      } else if (error.message) {
+        errorMsg = error.message;
+      }
+
+      message.error(errorMsg);
       console.error(error);
     } finally {
       setLoading(false);

@@ -39,11 +39,13 @@ export default function LoginPage() {
           break;
         case "propietario":
           router.push("/propietario/dashboard");
+        case "guardia":
+          router.push("/guardia/dashboard");
           break;
         default:
           router.push("/dashboard");
       }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       const msg =
         error?.response?.data?.message ||
@@ -69,7 +71,11 @@ export default function LoginPage() {
             </h1>
             <Form layout="vertical" onFinish={onFinish}>
               <Form.Item
-                label={<span className="text-blue-800 font-semibold">Correo electrónico</span>}
+                label={
+                  <span className="text-blue-800 font-semibold">
+                    Correo electrónico
+                  </span>
+                }
                 name="email"
                 rules={[{ required: true, message: "Ingresa tu correo" }]}
               >
@@ -83,7 +89,11 @@ export default function LoginPage() {
               </Form.Item>
 
               <Form.Item
-                label={<span className="text-blue-800 font-semibold">Contraseña</span>}
+                label={
+                  <span className="text-blue-800 font-semibold">
+                    Contraseña
+                  </span>
+                }
                 name="password"
                 rules={[{ required: true, message: "Ingresa tu contraseña" }]}
               >
@@ -97,7 +107,9 @@ export default function LoginPage() {
               </Form.Item>
 
               {errorMessage && (
-                <p className="text-red-600 mb-4 text-center font-medium">{errorMessage}</p>
+                <p className="text-red-600 mb-4 text-center font-medium">
+                  {errorMessage}
+                </p>
               )}
 
               <Form.Item>
@@ -137,4 +149,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

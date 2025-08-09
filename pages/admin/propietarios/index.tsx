@@ -40,7 +40,6 @@ export default function PropietariosIndex() {
   const [loading, setLoading] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [visible, setVisible] = useState(false);
 
   // Estado para la lista de condominios y condominio seleccionado
   const [condominios, setCondominios] = useState<Condominio[]>([]);
@@ -174,15 +173,6 @@ export default function PropietariosIndex() {
           value={condominioSeleccionado}
           onChange={(value) => setCondominioSeleccionado(value)}
           options={condominios.map((c) => ({ label: c.name, value: c._id }))}
-        />
-      </div>
-
-      <div className="mb-4 flex justify-end gap-2">
-        <Button onClick={() => setVisible(true)}>Reporte</Button>
-        <ModalReporte
-          open={visible}
-          onClose={() => setVisible(false)}
-          endpoint="/reportes/propietarios/excel"
         />
       </div>
 

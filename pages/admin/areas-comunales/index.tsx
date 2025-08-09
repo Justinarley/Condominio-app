@@ -44,7 +44,6 @@ export default function SolicitudesReserva() {
   const [solicitudes, setSolicitudes] = useState<SolicitudReserva[]>([]);
   const [condominios, setCondominios] = useState<Condominio[]>([]);
   const [loading, setLoading] = useState(false);
-  const [visible, setVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedSolicitud, setSelectedSolicitud] = useState<SolicitudReserva | null>(null);
   const [motivoRechazo, setMotivoRechazo] = useState("");
@@ -268,16 +267,6 @@ export default function SolicitudesReserva() {
             )}
           </Card>
         ))}
-      </div>
-
-      {/* Reporte */}
-      <div className="mb-4 flex justify-end gap-2">
-        <Button onClick={() => setVisible(true)}>Reporte</Button>
-        <ModalReporte
-          open={visible}
-          onClose={() => setVisible(false)}
-          endpoint="/reportes/propietarios/excel"
-        />
       </div>
 
       {/* Tabla de solicitudes con fondo celeste claro */}

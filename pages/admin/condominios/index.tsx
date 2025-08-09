@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, Table, Tag, Typography, message, Button, Space } from "antd";
 import api from "@/libs/axios";
-import { CheckOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import { CheckOutlined, FileExcelOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { CondominioSelect } from "@/pages/components/Filtro-condominios";
 import { CrearGastoMensualModal } from "@/pages/components/Modalgastos";
 import { IngresarAlicuotasModal } from "@/pages/components/ModalAlicuotas";
@@ -137,6 +137,17 @@ export default function CondominiosAdminIndex() {
             onClick={() => abrirModalAlicuota(record)}
             title="Asignar alícuota"
           ></Button>
+          <Button
+            type="default"
+            icon={<FileExcelOutlined />}
+            onClick={() => {
+              const url = `/condominios/${record._id}/excel-detallado`;
+              window.open(url, "_blank");
+            }}
+            title="Descargar reporte Excel detallado"
+          >
+            Reporte
+          </Button>
         </Space>
       ),
     },

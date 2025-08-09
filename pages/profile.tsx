@@ -110,69 +110,64 @@ export default function Profile() {
                 <Input placeholder="Número de teléfono" />
               </Form.Item>
 
-              {user.role === "propietario" && (
-                <>
-                  <Form.Item
-                    name="numberOfResidents"
-                    label="Número de residentes"
-                  >
-                    <Input type="number" min={1} placeholder="Ej. 3" />
-                  </Form.Item>
-                  <Form.Item
-                    name="emergencyContactName"
-                    label="Nombre contacto de emergencia"
-                  >
-                    <Input placeholder="Nombre de contacto" />
-                  </Form.Item>
-                  <Form.Item
-                    name="emergencyContactPhone"
-                    label="Teléfono contacto de emergencia"
-                  >
-                    <Input placeholder="Teléfono de contacto" />
-                  </Form.Item>
+              {user.role === "propietario" ||
+                (user.role === "guardia" && (
+                  <>
+                    <Form.Item
+                      name="emergencyContactName"
+                      label="Nombre contacto de emergencia"
+                    >
+                      <Input placeholder="Nombre de contacto" />
+                    </Form.Item>
+                    <Form.Item
+                      name="emergencyContactPhone"
+                      label="Teléfono contacto de emergencia"
+                    >
+                      <Input placeholder="Teléfono de contacto" />
+                    </Form.Item>
 
-                  <Form.List name="vehicles">
-                    {(fields, { add, remove }) => (
-                      <>
-                        <p className="font-semibold mb-2">Vehículos</p>
-                        {fields.map(({ key, name, ...restField }) => (
-                          <div key={key} className="flex gap-2 mb-2">
-                            <Form.Item
-                              {...restField}
-                              name={[name, "plate"]}
-                              className="w-1/3"
-                            >
-                              <Input placeholder="Placa" />
-                            </Form.Item>
-                            <Form.Item
-                              {...restField}
-                              name={[name, "model"]}
-                              className="w-1/3"
-                            >
-                              <Input placeholder="Modelo" />
-                            </Form.Item>
-                            <Form.Item
-                              {...restField}
-                              name={[name, "color"]}
-                              className="w-1/3"
-                            >
-                              <Input placeholder="Color" />
-                            </Form.Item>
-                            <Button danger onClick={() => remove(name)}>
-                              Eliminar
+                    <Form.List name="vehicles">
+                      {(fields, { add, remove }) => (
+                        <>
+                          <p className="font-semibold mb-2">Vehículos</p>
+                          {fields.map(({ key, name, ...restField }) => (
+                            <div key={key} className="flex gap-2 mb-2">
+                              <Form.Item
+                                {...restField}
+                                name={[name, "plate"]}
+                                className="w-1/3"
+                              >
+                                <Input placeholder="Placa" />
+                              </Form.Item>
+                              <Form.Item
+                                {...restField}
+                                name={[name, "model"]}
+                                className="w-1/3"
+                              >
+                                <Input placeholder="Modelo" />
+                              </Form.Item>
+                              <Form.Item
+                                {...restField}
+                                name={[name, "color"]}
+                                className="w-1/3"
+                              >
+                                <Input placeholder="Color" />
+                              </Form.Item>
+                              <Button danger onClick={() => remove(name)}>
+                                Eliminar
+                              </Button>
+                            </div>
+                          ))}
+                          <Form.Item>
+                            <Button type="dashed" onClick={() => add()} block>
+                              Agregar vehículo
                             </Button>
-                          </div>
-                        ))}
-                        <Form.Item>
-                          <Button type="dashed" onClick={() => add()} block>
-                            Agregar vehículo
-                          </Button>
-                        </Form.Item>
-                      </>
-                    )}
-                  </Form.List>
-                </>
-              )}
+                          </Form.Item>
+                        </>
+                      )}
+                    </Form.List>
+                  </>
+                ))}
 
               <Form.Item>
                 <Button

@@ -171,6 +171,23 @@ export default function Navbar() {
               />
             </>
           )}
+
+          {user?.role === "guardia" && (
+            <>
+              <TabItem
+                icon={<LayoutDashboard size={18} />}
+                label="Dashboard"
+                path="/guardia/dashboard"
+                isActive={currentPath === "/guardia/dashboard"}
+              />
+              <TabItem
+                icon={<Building size={18} />}
+                label="Visitas y Servicios"
+                path="/guardia/visitas-servicios"
+                isActive={currentPath === "/guardia/visitas-servicios"}
+              />
+            </>
+          )}
         </div>
       </div>
 

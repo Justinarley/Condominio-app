@@ -5,7 +5,7 @@ export type UserPayload = {
   sub: string;
   email: string;
   name: string;
-  role: "admin" | "super_admin" | "propietario";
+  role: "admin" | "super_admin" | "propietario" | "guardia"
 };
 
 export function useCurrentUser(): UserPayload | null {
